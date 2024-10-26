@@ -8,7 +8,7 @@ public class Blocks {
         Map<Integer, HashSet<Fact>> FactsById = new HashMap<>();
 
         for (Fact fact : database) {
-            //in next line, fact.ID defines a key
+            //in next line, fact.ID defines a primary key
             FactsById.computeIfAbsent(fact.ID, k -> new HashSet<>()).add(fact);
         }
 

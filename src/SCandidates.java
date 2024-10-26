@@ -3,10 +3,10 @@ import java.util.HashSet;
 public class SCandidates {
 
     // Method to find all sublists of maximum size k, including the empty set
-    public static <Fact> HashSet<HashSet<Fact>> getSCandidates(HashSet<Fact> database, int k) {
+    public static <Fact> HashSet<HashSet<Fact>> getSCandidates(HashSet<Fact> database) {
         HashSet<HashSet<Fact>> result = new HashSet<>();
         result.add(new HashSet<>()); // Add the empty set
-        generateSublists(database, new HashSet<>(), k, result);
+        generateSublists(database, new HashSet<>(), Query.K, result);
         return result;
     }
 
