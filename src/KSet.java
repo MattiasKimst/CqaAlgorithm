@@ -1,9 +1,9 @@
 import java.util.HashSet;
 
-public class SCandidates {
+public class KSet {
 
     // Method to find all sublists of maximum size k, including the empty set
-    public static <Fact> HashSet<HashSet<Fact>> getSCandidates(HashSet<Fact> database) {
+    public static <Fact> HashSet<HashSet<Fact>> getAllKSets(HashSet<Fact> database) {
         HashSet<HashSet<Fact>> result = new HashSet<>();
         result.add(new HashSet<>()); // Add the empty set
         generateSublists(database, new HashSet<>(), Query.K, result);

@@ -14,12 +14,12 @@ public class Algorithm {
         HashSet<HashSet<Fact>> blocks = Blocks.getBlocks(database);
 
         //find all possible k-sets in database
-        HashSet<HashSet<Fact>> SCandidatesList = SCandidates.getSCandidates(database);
+        HashSet<HashSet<Fact>> kSets = KSet.getAllKSets(database);
 
         //Check in each block for every fact a∈B if there is a set S′⊆S∪{a} such that S′∈Δ.
 
         //for each possible S candidate
-        for (HashSet<Fact> S : SCandidatesList) {
+        for (HashSet<Fact> S : kSets) {
             boolean shouldAddSToDelta = true;
             //Check in each block
             for (HashSet<Fact> B : blocks) {
