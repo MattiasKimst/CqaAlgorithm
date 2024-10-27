@@ -3,7 +3,6 @@ import java.util.HashSet;
 public class Algorithm {
 
     public static boolean isQueryCertainOnGivenDatabase(HashSet<Fact> database) {
-
         //Step 1: Initialize set Delta with all sets S that make the query true
         HashSet<HashSet<Fact>> delta = Delta.initializeDelta(database);
 
@@ -16,49 +15,50 @@ public class Algorithm {
         //find all possible k-sets in database
         HashSet<HashSet<Fact>> kSets = KSet.getAllKSets(database);
 
-        //Check in each block for every fact a∈B if there is a set S′⊆S∪{a} such that S′∈Δ.
-
-        //for each possible S candidate
-        for (HashSet<Fact> S : kSets) {
-            boolean shouldAddSToDelta = true;
-            //Check in each block
-            for (HashSet<Fact> B : blocks) {
-                //that for each fact in block
-                for (Fact a : B) {
-                    //there is a set S′⊆S∪{a}
-                    HashSet<Fact> SUnionA = union(S, a);
-                    if (!isThereSPrimThatIsSubsetOfSUnionA(delta, SUnionA)) shouldAddSToDelta=false;
-                }
-                //if every fact in block satisfied the condition S′⊆S∪{a} add S to delta
-                if (shouldAddSToDelta) {
-                    if (S.isEmpty()) return true; //if we add empty set to delta we can cancel and return answer that query is certain
-                    delta.add(S);
+        boolean thereMightBeMoreKSetsToAddToDelta;
+        do {
+            thereMightBeMoreKSetsToAddToDelta = false;
+            //for each possible S
+            for (HashSet<Fact> S : kSets) {
+                //if delta already contains S then skip
+                if (Utils.containsSet(delta, S)) continue;
+                //flag if current S should be added to Delta
+                boolean shouldAddSToDelta = true;
+                //Check in each block B
+                for (HashSet<Fact> B : blocks) {
+                    //that for each fact in block
+                    for (Fact a : B) {
+                        HashSet<Fact> SUnionA = Utils.union(S, a);
+                        //if Fact a does not satisfy S′⊆S∪{a}
+                        if (!isThereSPrimThatIsSubsetOfSUnionA(delta, SUnionA)) {
+                            //do not add that S to delta
+                            shouldAddSToDelta = false;
+                        }
+                    }
+                    //if every fact in block satisfied the condition S′⊆S∪{a} add S to delta
+                    if (shouldAddSToDelta) {
+                        if (S.isEmpty())
+                            //if we add empty set to delta we can cancel and return answer that query is certain
+                            return true;
+                        delta.add(S);
+                        //if we added S to delta, we must iterate over all possible S sets again
+                        thereMightBeMoreKSetsToAddToDelta = true;
+                    }
                 }
             }
-        }
+        } while (thereMightBeMoreKSetsToAddToDelta);
         return false;
     }
 
-    private static boolean isThereSPrimThatIsSubsetOfSUnionA(HashSet<HashSet<Fact>> delta, HashSet<Fact> SUnionA){
+    private static boolean isThereSPrimThatIsSubsetOfSUnionA(HashSet<HashSet<Fact>> delta, HashSet<Fact> SUnionA) {
         //check that there exists S' in delta that is subset of S∪{a}
         boolean existsSPrim = false;
         for (HashSet<Fact> SPrim : delta) {
-            if (isSubSet(SPrim, SUnionA)) {
+            if (Utils.isSubSet(SPrim, SUnionA)) {
                 existsSPrim = true;
                 break;
             }
         }
         return existsSPrim;
-    }
-
-    public static <Fact> boolean isSubSet(HashSet<Fact> subSet, HashSet<Fact> mainSet) {
-        return mainSet.containsAll(subSet);
-    }
-
-    public static HashSet<Fact> union(HashSet<Fact> S, Fact a) {
-        HashSet<Fact> SUnionA = new HashSet<>();
-        SUnionA.addAll(S);
-        SUnionA.add(a);
-        return SUnionA;
     }
 }
