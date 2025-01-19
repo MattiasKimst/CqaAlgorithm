@@ -8,7 +8,6 @@ public class R1 implements Fact {
     public String y;
     public String z;
 
-    //todo is it ok
     public R1() {
     }
 

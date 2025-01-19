@@ -10,12 +10,17 @@ public class Blocks {
     public void initialize(Database database) {
         set = new HashSet<>();
         for (List<Fact> relation : database.getDatabase()) {
-            Map<String, HashSet<Fact>> factsByPrimaryKey = new HashMap<>();
-            for (Fact fact : relation) {
-                factsByPrimaryKey.computeIfAbsent(fact.getPrimaryKey(), k -> new HashSet<>()).add(fact);
-            }
-            HashSet<HashSet<Fact>> blocksOfRelation = new HashSet<>(factsByPrimaryKey.values());
-            set.addAll(blocksOfRelation);
+            set.addAll(createBlocksFromRelation(relation));
         }
+    }
+
+    private HashSet<HashSet<Fact>> createBlocksFromRelation(List<Fact> relation) {
+        Map<String, HashSet<Fact>> factsGroupedByKey = new HashMap<>();
+        for (Fact fact : relation) {
+            factsGroupedByKey
+                    .computeIfAbsent(fact.getPrimaryKey(), k -> new HashSet<>())
+                    .add(fact);
+        }
+        return new HashSet<>(factsGroupedByKey.values());
     }
 }

@@ -29,14 +29,14 @@ public class CqaAlgorithm {
             while (kSets.hasNext()) {
                 HashSet<Fact> S = kSets.next();
                 //if delta already contains S then skip
-                if (Utils.containsSet(delta.set, S)) continue;
+                if (delta.set.contains(S)) continue;
                 //Check in each block B
                 for (HashSet<Fact> B : blocks.set) {
                     //flag if current S should be added to Delta
                     boolean shouldAddSToDelta = true;
                     //that for each fact in block
                     for (Fact a : B) {
-                        HashSet<Fact> SUnionA = Utils.union(S, a);
+                        HashSet<Fact> SUnionA = SetUtils.union(S, a);
                         //if Fact a does not satisfy S′⊆S∪{a}
                         if (!thereExistsSPrimThatIsSubsetOfSUnionA(delta.set, SUnionA)) {
                             //do not add that S to delta
@@ -63,7 +63,7 @@ public class CqaAlgorithm {
         //check that there exists S' in delta that is subset of S∪{a}
         boolean existsSPrim = false;
         for (HashSet<Fact> SPrim : delta) {
-            if (Utils.isSubSet(SPrim, SUnionA)) {
+            if (SetUtils.isSubSet(SPrim, SUnionA)) {
                 existsSPrim = true;
                 break;
             }

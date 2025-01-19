@@ -9,26 +9,41 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DataGenerator {
+
     public Database generateFacts(Schema schema, int numberOfFactsToBeGenerated) throws Exception {
-        List<List<Fact>> listOfRelationFactsLists = new ArrayList<>();
+        List<List<Fact>> allRelationFacts = new ArrayList<>();
 
-        for (Class<?> relation : schema.getRelations()) {
-            List<Fact> factsOfRelation = new ArrayList<>();
-
-            Fact fact = null;
-            Constructor<?> constructor = relation.getDeclaredConstructor();
-            for (int i = 0; i < numberOfFactsToBeGenerated; i++) {
-                fact = (Fact) constructor.newInstance();
-
-                for (Field attribute : relation.getDeclaredFields()) {
-                    String randomValue = RandomAttributeValueGenerator.generateRandomStringOfLengthBetween4And10();
-                    attribute.set(fact, randomValue);
-                }
-                factsOfRelation.add(fact);
-            }
-            listOfRelationFactsLists.add(factsOfRelation);
+        for (Class<?> relationClass : schema.getRelations()) {
+            List<Fact> factsForRelation = generateFactsForRelation(relationClass, numberOfFactsToBeGenerated);
+            allRelationFacts.add(factsForRelation);
         }
-        return new Database(listOfRelationFactsLists);
+
+        return new Database(allRelationFacts);
     }
 
+    private List<Fact> generateFactsForRelation(Class<?> relationClass, int numberOfFactsToBeGenerated) throws Exception {
+        List<Fact> facts = new ArrayList<>();
+
+        Constructor<?> constructor = relationClass.getDeclaredConstructor();
+        constructor.setAccessible(true);
+
+        for (int i = 0; i < numberOfFactsToBeGenerated; i++) {
+            Fact fact = createFactWithRandomAttributes(constructor, relationClass);
+            facts.add(fact);
+        }
+
+        return facts;
+    }
+
+    private Fact createFactWithRandomAttributes(Constructor<?> constructor, Class<?> relationClass) throws Exception {
+        Fact fact = (Fact) constructor.newInstance();
+
+        for (Field attribute : relationClass.getDeclaredFields()) {
+            attribute.setAccessible(true);
+            String randomValue = RandomAttributeValueGenerator.generateRandomStringOfLengthBetween4And10();
+            attribute.set(fact, randomValue);
+        }
+
+        return fact;
+    }
 }

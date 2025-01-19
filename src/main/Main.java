@@ -17,8 +17,8 @@ import static main.tests.TestUncertainQuery.testUncertainQuery;
 
 public class Main {
 
-    private static int NUMBER_OF_FACTS_TO_BE_GENERATED = 50;
-    private static int NUMBER_OF_FACTS_TO_BE_DUPLICATED = 40;
+    private static int NUMBER_OF_FACTS_TO_BE_GENERATED_IN_EACH_RELATION = 95;
+    private static int NUMBER_OF_FACTS_TO_BE_DUPLICATED_IN_EACH_RELATION = 5;
     private static int SIZE_OF_KEY_EQUAL_GROUPS = 2;
 
     private static Schema schema = new Schema(Arrays.asList(R1.class, R2.class));
@@ -28,8 +28,8 @@ public class Main {
     private static final FindConsistentAnswersAlgorithm findConsitentAnswersAlgorithm = new FindConsistentAnswersAlgorithm();
 
     public static void main(String[] args) throws Exception {
-        Database database = generator.generateFacts(schema, NUMBER_OF_FACTS_TO_BE_GENERATED);
-        InconsistenciesInserter.insertInconsistencies(database, NUMBER_OF_FACTS_TO_BE_DUPLICATED, SIZE_OF_KEY_EQUAL_GROUPS);
+        Database database = generator.generateFacts(schema, NUMBER_OF_FACTS_TO_BE_GENERATED_IN_EACH_RELATION);
+        InconsistenciesInserter.insertInconsistencies(database, NUMBER_OF_FACTS_TO_BE_DUPLICATED_IN_EACH_RELATION, SIZE_OF_KEY_EQUAL_GROUPS);
 
         System.out.println("Uncertain query test " + (testUncertainQuery() ? "PASSED" : "FAILED"));
         System.out.println("Certain query test " + (testCertainQuery() ? "PASSED" : "FAILED"));
@@ -43,7 +43,7 @@ public class Main {
 
         long durationInMilliseconds = (endTime - startTime) / 1_000_000;
         System.out.println("The query returned " + selectQueryResults.size()
-                + " out of which were consistent " + consitentAnswers.size() + " answers");
-        System.out.println("Time taken to find consistent answers: " + durationInMilliseconds + " ms");
+                + " out of which were certain " + consitentAnswers.size() + " answers");
+        System.out.println("Time taken to find certain answers: " + durationInMilliseconds + " ms");
     }
 }
