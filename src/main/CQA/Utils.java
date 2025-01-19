@@ -1,3 +1,7 @@
+package main.CQA;
+
+import main.data.relations.Fact;
+
 import java.util.HashSet;
 
 public class Utils {
