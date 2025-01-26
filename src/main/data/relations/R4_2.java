@@ -2,34 +2,30 @@ package main.data.relations;
 
 import main.data.annotation.PrimaryKey;
 
-public class R1 implements Fact {
+public class R4_2 implements Fact {
     @PrimaryKey
-    public String x;
     public String y;
-    public String z;
+    public String u;
+    public String d;
 
-    public R1() {
+    public R4_2() {
     }
 
     public void setY(String y) {
         this.y = y;
     }
 
-    public void setX(String x) {
-        this.x = x;
-    }
-
     @Override
     public String getPrimaryKey() {
-        return x;
+        return y;
     }
 
     @Override
     public String toString() {
-        return "R1{" +
-                "x='" + x + '\'' +
-                ", y='" + y + '\'' +
-                ", z='" + z + '\'' +
+        return "R4_2{" +
+                "y='" + y + '\'' +
+                ", u='" + u + '\'' +
+                ", d='" + d + '\'' +
                 '}';
     }
 }

@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class FindConsistentAnswersAlgorithm {
-
     CqaAlgorithm cqaAlgorithm = new CqaAlgorithm();
 
     public List<List<String>> findConsistentAnswers(List<List<String>> answers, Database database, Query query) {

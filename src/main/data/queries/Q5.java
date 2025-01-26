@@ -3,7 +3,7 @@ package main.data.queries;
 import main.data.models.Database;
 import main.data.relations.Fact;
 import main.data.relations.R1;
-import main.data.relations.R2;
+import main.data.relations.R4;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -11,41 +11,41 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class Q1 implements Query {
+public class Q5 implements Query {
 
     private final String z;
 
-    public Q1() {
+    public Q5() {
         this.z = null;
     }
 
-    private Q1(String z) { this.z = z; }
+    private Q5(String z) { this.z = z; }
 
     public int getK() {
         return 2;
     }
 
     public Query createWithPluggedVariables(List<String> freeVariables) {
-        return new Q1(freeVariables.getFirst());
+        return new Q5(freeVariables.getFirst());
     }
 
     //query itself
-    private Boolean queryCondition(R1 r1Fact, R2 r2Fact) {
-        return r1Fact.y.equals(r2Fact.y);
+    private Boolean queryCondition(R1 r1Fact, R4 r4Fact) {
+        return r1Fact.y.equals(r4Fact.y);
     }
 
-    private Boolean booleanQueryCondition(R1 r1Fact, R2 r2Fact) {
-        return queryCondition(r1Fact, r2Fact) && r1Fact.z.equals(z);
+    private Boolean booleanQueryCondition(R1 r1Fact, R4 r4Fact) {
+        return queryCondition(r1Fact, r4Fact) && r1Fact.z.equals(z);
     }
 
     public Boolean runBooleanQuery(List<Fact> facts) {
         R1 r1Fact = (R1) facts.get(0);
-        R2 r2Fact = (R2) facts.get(1);
-        return booleanQueryCondition(r1Fact, r2Fact);
+        R4 r4Fact = (R4) facts.get(1);
+        return booleanQueryCondition(r1Fact, r4Fact);
     }
 
-    private List<String> selectAnswer(R1 r1Fact, R2 r2Fact) {
-        if (queryCondition(r1Fact, r2Fact)) {
+    private List<String> selectAnswer(R1 r1Fact, R4 r4Fact) {
+        if (queryCondition(r1Fact, r4Fact)) {
             List<String> answer = new ArrayList<>();
             answer.add(r1Fact.z);
             return answer;
@@ -59,7 +59,7 @@ public class Q1 implements Query {
 
         return firstList.stream()
                 .flatMap(fact1 -> secondList.stream()
-                        .map(fact2 -> selectAnswer((R1) fact1, (R2) fact2)))
+                        .map(fact2 -> selectAnswer((R1) fact1, (R4) fact2)))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
@@ -70,7 +70,7 @@ public class Q1 implements Query {
 
         return firstList.stream()
                 .flatMap(fact1 -> secondList.stream()
-                        .filter(fact2 -> booleanQueryCondition((R1) fact1, (R2) fact2))
+                        .filter(fact2 -> booleanQueryCondition((R1) fact1, (R4) fact2))
                         .map(fact2 -> {
                             HashSet<Fact> set = new HashSet<>();
                             set.add(fact1);
@@ -82,8 +82,8 @@ public class Q1 implements Query {
 
     public void makeCombinationOfFactsSatisfyQuery(List<Fact> facts) {
         R1 r1Fact = (R1) facts.get(0);
-        R2 r2Fact = (R2) facts.get(1);
-        r1Fact.setY(r2Fact.y);
+        R4 r4Fact = (R4) facts.get(1);
+        r1Fact.setY(r4Fact.y);
     }
 
     public String getQueryAnswers() {

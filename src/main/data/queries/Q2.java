@@ -11,22 +11,27 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class Q1 implements Query {
+public class Q2 implements Query {
 
     private final String z;
+    private final String w;
 
-    public Q1() {
+    public Q2() {
         this.z = null;
+        this.w = null;
     }
 
-    private Q1(String z) { this.z = z; }
+    private Q2(String z, String w) {
+        this.z = z;
+        this.w = w;
+    }
 
     public int getK() {
         return 2;
     }
 
     public Query createWithPluggedVariables(List<String> freeVariables) {
-        return new Q1(freeVariables.getFirst());
+        return new Q2(freeVariables.getFirst(), freeVariables.getLast());
     }
 
     //query itself
@@ -35,7 +40,7 @@ public class Q1 implements Query {
     }
 
     private Boolean booleanQueryCondition(R1 r1Fact, R2 r2Fact) {
-        return queryCondition(r1Fact, r2Fact) && r1Fact.z.equals(z);
+        return queryCondition(r1Fact, r2Fact) && r1Fact.z.equals(z) && r2Fact.w.equals(w);
     }
 
     public Boolean runBooleanQuery(List<Fact> facts) {
@@ -48,6 +53,7 @@ public class Q1 implements Query {
         if (queryCondition(r1Fact, r2Fact)) {
             List<String> answer = new ArrayList<>();
             answer.add(r1Fact.z);
+            answer.add(r2Fact.w);
             return answer;
         }
         return null;
@@ -87,6 +93,6 @@ public class Q1 implements Query {
     }
 
     public String getQueryAnswers() {
-        return "z = " + z;
+        return "z = " + z + ", w = " + w;
     }
 }

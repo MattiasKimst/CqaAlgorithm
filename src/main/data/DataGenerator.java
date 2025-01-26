@@ -2,48 +2,45 @@ package main.data;
 
 import main.data.models.Database;
 import main.data.models.Schema;
-import main.data.relations.Fact;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
+import main.data.queries.Query;
+
 
 public class DataGenerator {
 
-    public Database generateFacts(Schema schema, int numberOfFactsToBeGenerated) throws Exception {
-        List<List<Fact>> allRelationFacts = new ArrayList<>();
+    public int numberOfCleanFactsToBeGeneratedInEachRelation;
+    public int numberOfFactsToBeDuplicatedInEachRelation;
+    public int numberOfAnswersToBeGenerated;
 
-        for (Class<?> relationClass : schema.getRelations()) {
-            List<Fact> factsForRelation = generateFactsForRelation(relationClass, numberOfFactsToBeGenerated);
-            allRelationFacts.add(factsForRelation);
-        }
+    private final CleanDataGenerator generator = new CleanDataGenerator();
+    private final InconsistenciesInserter inconsistenciesInserter = new InconsistenciesInserter();
+    private final QueryAnswersInserter queryAnswersInserter = new QueryAnswersInserter();
 
-        return new Database(allRelationFacts);
+    public Database generateInconsistentDatabase(Schema schema, double rateOfInconsistencies, int totalDatabaseSize,
+                                                int sizeOfKeyEqualGroups, Query query, double rateOfQueryAnswers) throws Exception {
+        numberOfCleanFactsToBeGeneratedInEachRelation = findNumberOfCleanFactsToBeGenerated(rateOfInconsistencies,
+                totalDatabaseSize, sizeOfKeyEqualGroups);
+        numberOfFactsToBeDuplicatedInEachRelation = findNumberOfFactsToBeDuplicated(totalDatabaseSize,
+                rateOfInconsistencies, sizeOfKeyEqualGroups);
+        numberOfAnswersToBeGenerated = findNumberOfAnswersToBeGenerated(totalDatabaseSize, rateOfQueryAnswers);
+
+        Database database = generator.generateFacts(schema, numberOfCleanFactsToBeGeneratedInEachRelation);
+        queryAnswersInserter.addQueryAnswers(database, numberOfAnswersToBeGenerated, query);
+        inconsistenciesInserter.insertInconsistencies(database, numberOfFactsToBeDuplicatedInEachRelation, sizeOfKeyEqualGroups);
+        return database;
     }
 
-    private List<Fact> generateFactsForRelation(Class<?> relationClass, int numberOfFactsToBeGenerated) throws Exception {
-        List<Fact> facts = new ArrayList<>();
-
-        Constructor<?> constructor = relationClass.getDeclaredConstructor();
-        constructor.setAccessible(true);
-
-        for (int i = 0; i < numberOfFactsToBeGenerated; i++) {
-            Fact fact = createFactWithRandomAttributes(constructor, relationClass);
-            facts.add(fact);
-        }
-
-        return facts;
+    private int findNumberOfCleanFactsToBeGenerated(double rateOfInconsistencies, int totalDatabaseSize,
+                                                           int sizeOfKeyEqualGroups) {
+        return (int) (totalDatabaseSize * (1 - rateOfInconsistencies/sizeOfKeyEqualGroups));
     }
 
-    private Fact createFactWithRandomAttributes(Constructor<?> constructor, Class<?> relationClass) throws Exception {
-        Fact fact = (Fact) constructor.newInstance();
-
-        for (Field attribute : relationClass.getDeclaredFields()) {
-            attribute.setAccessible(true);
-            String randomValue = RandomAttributeValueGenerator.generateRandomStringOfLengthBetween4And10();
-            attribute.set(fact, randomValue);
-        }
-
-        return fact;
+    private int findNumberOfFactsToBeDuplicated(double totalDatabaseSize, double rateOfInconsistencies,
+                                                       int sizeOfKeyEqualGroups) {
+        return (int) (totalDatabaseSize * ( rateOfInconsistencies / sizeOfKeyEqualGroups));
     }
+
+    private int findNumberOfAnswersToBeGenerated(int totalDatabaseSize, double rateOfQueryAnswers) {
+        return (int) (totalDatabaseSize * rateOfQueryAnswers);
+    }
+
 }

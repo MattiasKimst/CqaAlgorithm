@@ -12,4 +12,7 @@ public interface Query {
     public Boolean runBooleanQuery(List<Fact> facts);
     public List<List<String>> runSelectQuery(Database database);
     public HashSet<HashSet<Fact>> findSatisfyingFacts(Database database);
+    public void makeCombinationOfFactsSatisfyQuery(List<Fact> facts);
+    public String getQueryAnswers();
+
 }

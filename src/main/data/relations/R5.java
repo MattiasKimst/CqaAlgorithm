@@ -2,13 +2,13 @@ package main.data.relations;
 
 import main.data.annotation.PrimaryKey;
 
-public class R1 implements Fact {
+public class R5 implements Fact {
     @PrimaryKey
     public String x;
     public String y;
-    public String z;
+    public String d;
 
-    public R1() {
+    public R5() {
     }
 
     public void setY(String y) {
@@ -26,10 +26,10 @@ public class R1 implements Fact {
 
     @Override
     public String toString() {
-        return "R1{" +
+        return "R5{" +
                 "x='" + x + '\'' +
                 ", y='" + y + '\'' +
-                ", z='" + z + '\'' +
+                ", d='" + d + '\'' +
                 '}';
     }
 }

@@ -7,7 +7,18 @@ import java.util.HashSet;
 
 public class CqaAlgorithm {
 
+    public int checkedSUnionATotal;
+    public int checkedPotentialKsetTotal;
+    public int checkedBlockTotal;
+    public int addedNewKSetToDeltaTotal;
+
+
     public boolean isQueryCertainOnGivenDatabase(Database database, Query query) {
+        int checkedSUnionA = 0;
+        int checkedPotentialKSet = 0;
+        int checkedBlock = 0;
+        int addedNewKSetToDelta = 0;
+
         Delta delta = new Delta();
         Blocks blocks = new Blocks();
         KSets kSets = new KSets();
@@ -41,21 +52,29 @@ public class CqaAlgorithm {
                         if (!thereExistsSPrimThatIsSubsetOfSUnionA(delta.set, SUnionA)) {
                             //do not add that S to delta
                             shouldAddSToDelta = false;
+                            break; //we can skip looking through all facts in block because we anyway don't add this S
                         }
+                        checkedSUnionA++;
                     }
                     //if every fact in block satisfied the condition S′⊆S∪{a} add S to delta
                     if (shouldAddSToDelta) {
                         if (S.isEmpty()) {
                             //if we add empty set to delta we can cancel and return the answer that query is certain
+                            concludeResults(true, query, checkedSUnionA, checkedPotentialKSet, checkedBlock, addedNewKSetToDelta);
                             return true;
                         }
                         delta.set.add(S);
+                        addedNewKSetToDelta++;
                         //if we added S to delta, we must iterate over all possible S sets again
                         thereMightBeMoreKSetsToAddToDelta = true;
+                        break; //we added S to delta, so we don't need to continue checking if there exists another satisfying block
                     }
+                    checkedBlock++;
                 }
+                checkedPotentialKSet++;
             }
         } while (thereMightBeMoreKSetsToAddToDelta);
+        concludeResults(false, query, checkedSUnionA, checkedPotentialKSet, checkedBlock, addedNewKSetToDelta);
         return false;
     }
 
@@ -69,5 +88,18 @@ public class CqaAlgorithm {
             }
         }
         return existsSPrim;
+    }
+
+    private void concludeResults(boolean isCertain, Query query, int checkedSUnionA, int checkedPotentialKSet,
+                                 int checkedBlock, int addedNewKSetToDelta) {
+        checkedSUnionATotal += checkedSUnionA;
+        checkedPotentialKsetTotal += checkedPotentialKSet;
+        checkedBlockTotal += checkedBlock;
+        addedNewKSetToDeltaTotal += addedNewKSetToDelta;
+
+        System.out.println("Answer " + query.getQueryAnswers() + (isCertain ? " is certain." : " is not certain.")
+                + " In total checked " + checkedSUnionA
+                + " times if there exists suitable S prim, " + checkedPotentialKSet + " potential KSets, " + checkedBlock
+                + " blocks, added " + addedNewKSetToDelta + " times a new Kset to delta" );
     }
 }
