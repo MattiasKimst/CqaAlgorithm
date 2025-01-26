@@ -1,11 +1,9 @@
 package main;
 
 import main.data.queries.Query;
-
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.sql.SQLOutput;
 import java.util.List;
 
 public class Logger {
@@ -20,6 +18,7 @@ public class Logger {
                 + numberOfFactsToBeDuplicatedInEachRelation * (sizeOfKeyEqualGroups - 1);
         int finalDatabaseSize = finalRelationSize * query.getK();
 
+        System.out.println("Tested " + query.getClass().getSimpleName());
         System.out.println("Generated database with " + numberOfCleanFactsToBeGeneratedInEachRelation
                 + " consitent facts in each relation");
         System.out.println("Duplicating " + numberOfFactsToBeDuplicatedInEachRelation
@@ -28,7 +27,6 @@ public class Logger {
         System.out.println("Modifying " + numberOfAnswersGenerated + " of those facts to be query answers");
         System.out.println("Each relation size in total is " + finalRelationSize);
         System.out.println("In total there are " + finalDatabaseSize + " facts in database.");
-        System.out.println("Testing " + query.getClass().getSimpleName());
         System.out.println("SELECT query returned " + selectQueryResults.size() + " answers.");
         System.out.println("Certain were "  + certainAnswers.size() + " answers.");
         System.out.println("Time taken to find certain answers: " + durationInMilliseconds + " ms");

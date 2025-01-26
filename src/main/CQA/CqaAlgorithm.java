@@ -96,10 +96,10 @@ public class CqaAlgorithm {
         checkedPotentialKsetTotal += checkedPotentialKSet;
         checkedBlockTotal += checkedBlock;
         addedNewKSetToDeltaTotal += addedNewKSetToDelta;
-
+/*
         System.out.println("Answer " + query.getQueryAnswers() + (isCertain ? " is certain." : " is not certain.")
                 + " In total checked " + checkedSUnionA
                 + " times if there exists suitable S prim, " + checkedPotentialKSet + " potential KSets, " + checkedBlock
-                + " blocks, added " + addedNewKSetToDelta + " times a new Kset to delta" );
+                + " blocks, added " + addedNewKSetToDelta + " times a new Kset to delta" );*/
     }
 }

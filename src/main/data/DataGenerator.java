@@ -15,13 +15,13 @@ public class DataGenerator {
     private final InconsistenciesInserter inconsistenciesInserter = new InconsistenciesInserter();
     private final QueryAnswersInserter queryAnswersInserter = new QueryAnswersInserter();
 
-    public Database generateInconsistentDatabase(Schema schema, double rateOfInconsistencies, int totalDatabaseSize,
+    public Database generateInconsistentDatabase(Schema schema, double rateOfInconsistencies, int relationTotalSize,
                                                 int sizeOfKeyEqualGroups, Query query, double rateOfQueryAnswers) throws Exception {
         numberOfCleanFactsToBeGeneratedInEachRelation = findNumberOfCleanFactsToBeGenerated(rateOfInconsistencies,
-                totalDatabaseSize, sizeOfKeyEqualGroups);
-        numberOfFactsToBeDuplicatedInEachRelation = findNumberOfFactsToBeDuplicated(totalDatabaseSize,
+                relationTotalSize, sizeOfKeyEqualGroups);
+        numberOfFactsToBeDuplicatedInEachRelation = findNumberOfFactsToBeDuplicated(relationTotalSize,
                 rateOfInconsistencies, sizeOfKeyEqualGroups);
-        numberOfAnswersToBeGenerated = findNumberOfAnswersToBeGenerated(totalDatabaseSize, rateOfQueryAnswers);
+        numberOfAnswersToBeGenerated = findNumberOfAnswersToBeGenerated(relationTotalSize, rateOfQueryAnswers);
 
         Database database = generator.generateFacts(schema, numberOfCleanFactsToBeGeneratedInEachRelation);
         queryAnswersInserter.addQueryAnswers(database, numberOfAnswersToBeGenerated, query);
@@ -36,7 +36,7 @@ public class DataGenerator {
 
     private int findNumberOfFactsToBeDuplicated(double totalDatabaseSize, double rateOfInconsistencies,
                                                        int sizeOfKeyEqualGroups) {
-        return (int) (totalDatabaseSize * ( rateOfInconsistencies / sizeOfKeyEqualGroups));
+        return (int) Math.ceil(totalDatabaseSize * ( rateOfInconsistencies / sizeOfKeyEqualGroups));
     }
 
     private int findNumberOfAnswersToBeGenerated(int totalDatabaseSize, double rateOfQueryAnswers) {

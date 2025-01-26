@@ -10,6 +10,6 @@ public class Delta {
 
     public void initialize(Query query, Database database) {
         set = query.findSatisfyingFacts(database);
-        System.out.println("Delta initialized: " + set.toString());
+        //System.out.println("Delta initialized: " + set.toString());
     }
 }

@@ -3,16 +3,15 @@ package main.data;
 import java.util.Random;
 
 public class RandomAttributeValueGenerator {
-    public static String generateRandomStringOfLengthBetween4And10() {
-        Random random = new Random();
-        int length = 4 + random.nextInt(7);
+    private final static int LENGTH = 10;
+    private final static Random random = new Random();
+    private final static String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
-        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    public static String generateRandomAlphanumericString() {
+        StringBuilder sb = new StringBuilder(LENGTH);
 
-        StringBuilder sb = new StringBuilder(length);
-
-        for (int i = 0; i < length; i++) {
-            sb.append(characters.charAt(random.nextInt(characters.length())));
+        for (int i = 0; i < LENGTH; i++) {
+            sb.append(CHARACTERS.charAt(random.nextInt(CHARACTERS.length())));
         }
 
         return sb.toString();

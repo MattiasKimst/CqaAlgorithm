@@ -17,11 +17,16 @@ import static main.tests.TestUncertainQuery.testUncertainQuery;
 
 public class Main {
 
-    private static final int NUMBER_OF_REPEATS = 25;
+    private static final int[] RELATION_SIZES = new int[] {100};
+    private static final double[] RATES_OF_INCONSISTENCIES = new double[] {0, 0.01, 1};
+    private static final int[] KEY_EQUAL_GROUPS_SIZES = new int[] {2, 3};
+
+    private static final int NUMBER_OF_REPETIONS = 1;
     private static final double RATE_OF_INCONSISTENCIES = 0.2;
     private static final int RELATION_SIZE = 10;
     private static final int SIZE_OF_KEY_EQUAL_GROUPS = 2;
     private static final double RATE_OF_QUERY_ANSWERS_IN_DATABASE = 0.15;
+
 
     private static final Schema schema1 = new Schema(Arrays.asList(R1.class, R2.class));
     private static final Schema schema2 = new Schema(Arrays.asList(R1.class, R3.class, R2_2.class));
@@ -40,21 +45,35 @@ public class Main {
         // Running tests
         runTests();
 
+        /*
         // Processing schema-query pairs
         for (int i = 0; i < NUMBER_OF_REPEATS; i++) {
             for (Map.Entry<Query, Schema> entry : schemaQueryPairs.entrySet()) {
-                run(entry.getKey(), entry.getValue());
+                run(entry.getKey(), entry.getValue(), RELATION_SIZE, RATE_OF_INCONSISTENCIES, SIZE_OF_KEY_EQUAL_GROUPS);
+            }
+        }*/
+
+        for (int relationSize : RELATION_SIZES) {
+            for ( double rateOfInconsistency : RATES_OF_INCONSISTENCIES) {
+                for (int keyEqualGroupSize : KEY_EQUAL_GROUPS_SIZES) {
+                    for (int i = 0; i < NUMBER_OF_REPETIONS; i++) {
+                        for (Map.Entry<Query, Schema> entry : schemaQueryPairs.entrySet()) {
+                            run(entry.getKey(), entry.getValue(), relationSize, rateOfInconsistency, keyEqualGroupSize);
+                        }
+                    }
+                }
             }
         }
     }
 
-    private static void run(Query query, Schema schema) throws Exception {
+    private static void run(Query query, Schema schema, int relationSize, double rateOfInconsistency,
+                            int sizeOfKeyEqualGroups) throws Exception {
         DataGenerator dataGenerator = new DataGenerator();
         FindConsistentAnswersAlgorithm findConsistentAnswersAlgorithm = new FindConsistentAnswersAlgorithm();
 
         Database database = dataGenerator.generateInconsistentDatabase(
-                schema, RATE_OF_INCONSISTENCIES, RELATION_SIZE,
-                SIZE_OF_KEY_EQUAL_GROUPS, query, RATE_OF_QUERY_ANSWERS_IN_DATABASE);
+                schema, rateOfInconsistency, relationSize,
+                sizeOfKeyEqualGroups, query, RATE_OF_QUERY_ANSWERS_IN_DATABASE);
 
         List<List<String>> selectQueryResults = query.runSelectQuery(database);
 
@@ -75,14 +94,14 @@ public class Main {
         logQueryResults(numberOfCleanFactsToBeGeneratedInEachRelation, numberOfFactsToBeDuplicatedInEachRelation,
                 numberOfAnswersToBeGenerated, query, selectQueryResults, consistentAnswers, durationInMilliseconds,
                 checkedSUnionATotal, checkedPotentialKsetTotal, checkedBlockTotal, addedNewKSetToDeltaTotal,
-                RATE_OF_INCONSISTENCIES, SIZE_OF_KEY_EQUAL_GROUPS);
+                rateOfInconsistency, sizeOfKeyEqualGroups);
     }
 
     private static Map<Query, Schema> createSchemaQueryPairs() {
         Map<Query, Schema> map = new LinkedHashMap<>();
         map.put(new Q1(), schema1);
         map.put(new Q2(), schema1);
-        map.put(new Q3(), schema2);
+        /*map.put(new Q3(), schema2);
         map.put(new Q4(), schema2);
         map.put(new Q5(), schema3);
         map.put(new Q6(), schema4);
@@ -90,10 +109,10 @@ public class Main {
         map.put(new Q8(), schema6);
         map.put(new Q9(), schema7);
         map.put(new Q10(), schema7);
-        map.put(new Q11(), schema6);
+        //map.put(new Q11(), schema6);
         map.put(new Q12(), schema8);
         map.put(new Q13(), schema9);
-        map.put(new Q14(), schema10);
+        map.put(new Q14(), schema10);*/
         return map;
     }
 

@@ -40,7 +40,7 @@ public class CleanDataGenerator {
 
         for (Field attribute : relationClass.getDeclaredFields()) {
             attribute.setAccessible(true);
-            String randomValue = RandomAttributeValueGenerator.generateRandomStringOfLengthBetween4And10();
+            String randomValue = RandomAttributeValueGenerator.generateRandomAlphanumericString();
             attribute.set(fact, randomValue);
         }
 

@@ -40,7 +40,7 @@ public class InconsistenciesInserter {
                     //if the field is primary key we keep original value, otherwise generate new value
                     Object valueToBeAssigned = field.get(originalFact);
                     if (!field.isAnnotationPresent(PrimaryKey.class)) {
-                        valueToBeAssigned = RandomAttributeValueGenerator.generateRandomStringOfLengthBetween4And10();
+                        valueToBeAssigned = RandomAttributeValueGenerator.generateRandomAlphanumericString();
                     }
                     field.set(duplicateFact, valueToBeAssigned);
                 }
