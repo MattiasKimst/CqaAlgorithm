@@ -4,7 +4,7 @@ import main.data.relations.Fact;
 import java.util.List;
 
 public class Database {
-    private List<List<Fact>> database;
+    private final List<List<Fact>> database;
 
     public Database(List<List<Fact>> listOfRelationFactsLists) {
         database = listOfRelationFactsLists;

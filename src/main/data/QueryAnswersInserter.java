@@ -9,7 +9,7 @@ import java.util.List;
 
 public class QueryAnswersInserter {
 
-    public void addQueryAnswers(Database database, int numberOfAnswersToSatisfyQuery, Query query) throws Exception {
+    public void insertQueryAnswers(Database database, int numberOfAnswersToSatisfyQuery, Query query) throws Exception {
 
         List<List<Fact>> selectedFactsFromRelations = new ArrayList<>();
         for (List<Fact> relation : database.getDatabase()) {

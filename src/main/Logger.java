@@ -12,11 +12,13 @@ public class Logger {
                                        Query query, List<List<String>> selectQueryResults,
                                        List<List<String>> certainAnswers, long durationInMilliseconds,
                                        int checkedSUnionATotal, int checkedPotentialKsetTotal, int checkedBlockTotal,
-                                       int addedNewKSetToDeltaTotal, double rateOfInconsistencies, int sizeOfKeyEqualGroups) {
+                                       int addedNewKSetToDeltaTotal, int sizeOfKeyEqualGroups) {
 
         int finalRelationSize = numberOfCleanFactsToBeGeneratedInEachRelation
                 + numberOfFactsToBeDuplicatedInEachRelation * (sizeOfKeyEqualGroups - 1);
         int finalDatabaseSize = finalRelationSize * query.getK();
+        double rateOfInconsistencies =
+                (double) (numberOfFactsToBeDuplicatedInEachRelation * sizeOfKeyEqualGroups) / finalDatabaseSize;
 
         System.out.println("Tested " + query.getClass().getSimpleName());
         System.out.println("Generated database with " + numberOfCleanFactsToBeGeneratedInEachRelation

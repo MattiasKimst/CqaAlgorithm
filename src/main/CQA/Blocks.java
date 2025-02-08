@@ -4,6 +4,10 @@ import main.data.models.Database;
 import main.data.relations.Fact;
 import java.util.*;
 
+/**
+ * A class containing database blocks and methods for finding the block from database
+ * A block is a set of facts where all facts share the primary key
+ */
 public class Blocks {
     public HashSet<HashSet<Fact>> set;
 

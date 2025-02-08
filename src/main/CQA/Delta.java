@@ -5,6 +5,11 @@ import main.data.queries.Query;
 import main.data.relations.Fact;
 import java.util.HashSet;
 
+/**
+ * A class containing Delta - a set initially containing query-satisfying facts and where new facts are added during
+ * CQA algorithm iterations
+ * Contains method for finding initally facts satisfying the query to Delta
+ */
 public class Delta {
     public HashSet<HashSet<Fact>> set;
 

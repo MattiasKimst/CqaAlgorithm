@@ -63,7 +63,7 @@ public class Q14 implements Query {
         List<Fact> thirdList = database.getDatabase().get(2);
         List<Fact> fourthList = database.getDatabase().get(3);
 
-        return firstList.stream()
+        return firstList.parallelStream()
                 .flatMap(fact1 -> secondList.stream()
                         .flatMap(fact2 -> thirdList.stream()
                                 .flatMap(fact3 -> fourthList.stream()
@@ -83,7 +83,7 @@ public class Q14 implements Query {
         List<Fact> thirdList = database.getDatabase().get(2);
         List<Fact> fourthList = database.getDatabase().get(3);
 
-        return firstList.stream()
+        return firstList.parallelStream()
                 .flatMap(fact1 -> secondList.stream()
                         .flatMap(fact2 -> thirdList.stream()
                                 .flatMap(fact3 -> fourthList.stream()

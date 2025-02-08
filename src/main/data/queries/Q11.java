@@ -59,7 +59,7 @@ public class Q11 implements Query {
         List<Fact> firstList = database.getDatabase().get(0);
         List<Fact> secondList = database.getDatabase().get(1);
 
-        return firstList.stream()
+        return firstList.parallelStream()
                 .flatMap(fact1 -> secondList.stream()
                         .map(fact2 -> selectAnswer((R1) fact1, (R2_4) fact2)))
                 .filter(Objects::nonNull)
@@ -70,7 +70,7 @@ public class Q11 implements Query {
         List<Fact> firstList = database.getDatabase().get(0);
         List<Fact> secondList = database.getDatabase().get(1);
 
-        return firstList.stream()
+        return firstList.parallelStream()
                 .flatMap(fact1 -> secondList.stream()
                         .filter(fact2 -> booleanQueryCondition((R1) fact1, (R2_4) fact2))
                         .map(fact2 -> {

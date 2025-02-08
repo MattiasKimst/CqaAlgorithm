@@ -3,15 +3,25 @@ package main.CQA;
 import main.data.models.Database;
 import main.data.queries.Query;
 import main.data.relations.Fact;
-import java.util.HashSet;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+
+import static main.CQA.IrrelevantFactsRemover.removeIrrelevantFacts;
+
+/**
+ * The class containing the most central part - the CQA algorithm
+ * the method isQueryCertain takes a boolean conjunctive query obtained by plugging a SELECT query anwer to SELECT query
+ * and returns boolean value; True if the answer is certain; False if the answer is not certain
+ */
 public class CqaAlgorithm {
 
+    //counters for counting steps performed by the algorithm
     public int checkedSUnionATotal;
     public int checkedPotentialKsetTotal;
     public int checkedBlockTotal;
     public int addedNewKSetToDeltaTotal;
-
 
     public boolean isQueryCertainOnGivenDatabase(Database database, Query query) {
         int checkedSUnionA = 0;
@@ -26,55 +36,76 @@ public class CqaAlgorithm {
         //Step 1: Initialize set Delta with all sets S that satisfy the query
         delta.initialize(query, database);
 
+        // Optimization step - remove irrelevant facts to avoid making unnecessary steps
+        Database relevantDatabase = removeIrrelevantFacts(database, delta);
+
         //Step 2: Add any set S of at most k facts to Δ if there exists a block B (i.e., a maximal set of facts
         // sharing the same key) such that for every fact a∈B there is a set S′⊆S∪{a} such that S′∈Δ
 
         //First find all such blocks B
-        blocks.initialize(database);
+        blocks.initialize(relevantDatabase);
 
         boolean thereMightBeMoreKSetsToAddToDelta;
         do {
-            kSets.initialize(database.getDatabase(), query.getK());
+            kSets.initialize(relevantDatabase.getDatabase(), query.getK());
+
+            //flag that helps us to determine if we need to look through all set S candidates again
             thereMightBeMoreKSetsToAddToDelta = false;
-            //for each possible S
+
+            //for each possible S set
             while (kSets.hasNext()) {
                 HashSet<Fact> S = kSets.next();
+
                 //if delta already contains S then skip
                 if (delta.set.contains(S)) continue;
+
                 //Check in each block B
                 for (HashSet<Fact> B : blocks.set) {
+
                     //flag if current S should be added to Delta
                     boolean shouldAddSToDelta = true;
+
                     //that for each fact in block
                     for (Fact a : B) {
+                        //find S∪{a}
                         HashSet<Fact> SUnionA = SetUtils.union(S, a);
-                        //if Fact a does not satisfy S′⊆S∪{a}
+
+                        //if fact a does not satisfy S′⊆S∪{a}
                         if (!thereExistsSPrimThatIsSubsetOfSUnionA(delta.set, SUnionA)) {
                             //do not add that S to delta
                             shouldAddSToDelta = false;
-                            break; //we can skip looking through all facts in block because we anyway don't add this S
+                            //we can skip looking through all facts in block because we anyway don't add this S
+                            break;
                         }
                         checkedSUnionA++;
                     }
+
                     //if every fact in block satisfied the condition S′⊆S∪{a} add S to delta
                     if (shouldAddSToDelta) {
                         if (S.isEmpty()) {
                             //if we add empty set to delta we can cancel and return the answer that query is certain
-                            concludeResults(true, query, checkedSUnionA, checkedPotentialKSet, checkedBlock, addedNewKSetToDelta);
+                            concludeResults(checkedSUnionA, checkedPotentialKSet, checkedBlock, addedNewKSetToDelta);
                             return true;
                         }
                         delta.set.add(S);
                         addedNewKSetToDelta++;
+
                         //if we added S to delta, we must iterate over all possible S sets again
                         thereMightBeMoreKSetsToAddToDelta = true;
-                        break; //we added S to delta, so we don't need to continue checking if there exists another satisfying block
+
+                        //we added S to delta, so we don't need to continue checking if there exists another block that
+                        //could satisfy the condition allowing us to add the current S candidate to delta
+                        break;
                     }
                     checkedBlock++;
                 }
                 checkedPotentialKSet++;
             }
         } while (thereMightBeMoreKSetsToAddToDelta);
-        concludeResults(false, query, checkedSUnionA, checkedPotentialKSet, checkedBlock, addedNewKSetToDelta);
+
+        concludeResults(checkedSUnionA, checkedPotentialKSet, checkedBlock, addedNewKSetToDelta);
+
+        //we never reached adding empty set to delta - answer is not certain
         return false;
     }
 
@@ -90,16 +121,12 @@ public class CqaAlgorithm {
         return existsSPrim;
     }
 
-    private void concludeResults(boolean isCertain, Query query, int checkedSUnionA, int checkedPotentialKSet,
-                                 int checkedBlock, int addedNewKSetToDelta) {
+    //for logging and performance measuring purpose
+    private void concludeResults(int checkedSUnionA, int checkedPotentialKSet, int checkedBlock,
+                                 int addedNewKSetToDelta) {
         checkedSUnionATotal += checkedSUnionA;
         checkedPotentialKsetTotal += checkedPotentialKSet;
         checkedBlockTotal += checkedBlock;
         addedNewKSetToDeltaTotal += addedNewKSetToDelta;
-/*
-        System.out.println("Answer " + query.getQueryAnswers() + (isCertain ? " is certain." : " is not certain.")
-                + " In total checked " + checkedSUnionA
-                + " times if there exists suitable S prim, " + checkedPotentialKSet + " potential KSets, " + checkedBlock
-                + " blocks, added " + addedNewKSetToDelta + " times a new Kset to delta" );*/
     }
 }

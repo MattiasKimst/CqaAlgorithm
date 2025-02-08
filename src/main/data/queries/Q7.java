@@ -58,7 +58,7 @@ public class Q7 implements Query {
         List<Fact> secondList = database.getDatabase().get(1);
         List<Fact> thirdList = database.getDatabase().get(2);
 
-        return firstList.stream()
+        return firstList.parallelStream()
                 .flatMap(fact1 -> secondList.stream()
                         .flatMap(fact2 -> thirdList.stream()
                                 .map(fact3 -> selectAnswer((R1) fact1, (R2_4) fact2, (R5) fact3))))
@@ -71,7 +71,7 @@ public class Q7 implements Query {
         List<Fact> secondList = database.getDatabase().get(1);
         List<Fact> thirdList = database.getDatabase().get(2);
 
-        return firstList.stream()
+        return firstList.parallelStream()
                 .flatMap(fact1 -> secondList.stream()
                         .flatMap(fact2 -> thirdList.stream()
                                 .filter(fact3 -> booleanQueryCondition((R1) fact1, (R2_4) fact2, (R5) fact3))
