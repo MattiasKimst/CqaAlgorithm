@@ -1,14 +1,18 @@
-package main.data.relations;
+package main.data.facts;
 
 import main.data.annotation.PrimaryKey;
 
-public class R2_4 implements Fact {
+public class R6 implements Fact {
+
     @PrimaryKey
     public String y;
-    public String x;
-    public String w;
+    public String z;
 
-    public R2_4() {
+    public R6() {
+    }
+
+    public void setZ(String z) {
+        this.z = z;
     }
 
     @Override
@@ -18,10 +22,10 @@ public class R2_4 implements Fact {
 
     @Override
     public String toString() {
-        return "R2_4{" +
+        return "R6{" +
                 "y='" + y + '\'' +
-                ", x='" + x + '\'' +
-                ", w='" + w + '\'' +
+                ", z='" + z + '\'' +
                 '}';
     }
+
 }

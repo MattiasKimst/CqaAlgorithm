@@ -1,15 +1,16 @@
 package main.tests;
 
-import main.FindConsistentAnswersAlgorithm;
 import main.data.models.Database;
-import main.data.queries.Q1;
-import main.data.relations.Fact;
-import main.data.relations.R1;
-import main.data.relations.R2;
+import main.data.facts.Fact;
+import main.data.facts.R1;
+import main.data.facts.R2;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A testcase that checks if algorithm correctly detects certain query on an example of duplicate facts
+ */
 public class TestCertainQueryDuplicateFacts extends TestBase {
 
     public static boolean testCertainQueryDuplicateFacts() {
@@ -42,4 +43,5 @@ public class TestCertainQueryDuplicateFacts extends TestBase {
 
         return consitentAnswers.size() == 4 && consitentAnswers.getFirst().getFirst().equals("ABCD");
     }
+
 }

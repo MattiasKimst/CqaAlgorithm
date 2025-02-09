@@ -2,12 +2,18 @@ package main.data;
 
 import main.data.annotation.PrimaryKey;
 import main.data.models.Database;
-import main.data.relations.Fact;
+import main.data.facts.Fact;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * A class for inserting inconsistent facts into database
+ * insertInconsistencies method takes a database with consistent facts and duplicates specified number of randomly
+ * selected facts by keeping primary key, but overwriting with new random values other attributes
+ * defined number of times so that primary-key-equal groups of defined size are formed
+ */
 public class InconsistenciesInserter {
 
     public void insertInconsistencies(Database database, int numberOfFactsToBeDuplicated,
@@ -50,4 +56,5 @@ public class InconsistenciesInserter {
         }
         return duplicatedList;
     }
+
 }

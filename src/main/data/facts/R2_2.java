@@ -1,31 +1,29 @@
-package main.data.relations;
+package main.data.facts;
 
 import main.data.annotation.PrimaryKey;
 
-public class R4_2 implements Fact {
+public class R2_2 implements Fact {
+
     @PrimaryKey
-    public String y;
+    public String v;
     public String u;
     public String d;
 
-    public R4_2() {
-    }
-
-    public void setY(String y) {
-        this.y = y;
+    public R2_2() {
     }
 
     @Override
     public String getPrimaryKey() {
-        return y;
+        return v;
     }
 
     @Override
     public String toString() {
-        return "R4_2{" +
-                "y='" + y + '\'' +
+        return "R2_2{" +
+                "v='" + v + '\'' +
                 ", u='" + u + '\'' +
                 ", d='" + d + '\'' +
                 '}';
     }
+
 }

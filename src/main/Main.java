@@ -3,7 +3,7 @@ package main;
 import main.data.DataGenerator;
 import main.data.queries.*;
 import main.data.models.Schema;
-import main.data.relations.*;
+import main.data.facts.*;
 import main.data.models.Database;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -17,11 +17,11 @@ import static main.tests.TestUncertainQuery.testUncertainQuery;
 
 public class Main {
 
-    private static final int REPEATS = 1;
-    private static final int CLEAN_FACTS_TO_BE_GENERATED_IN_EACH_RELATION = 950;
-    private static final int FACTS_TO_BE_DUPLICATED_IN_EACH_RELATION = 50;
+    private static final int REPEATS = 25;
+    private static final int CLEAN_FACTS_TO_BE_GENERATED_IN_EACH_RELATION = 95;
+    private static final int FACTS_TO_BE_DUPLICATED_IN_EACH_RELATION = 5;
     private static final int SIZE_OF_KEY_EQUAL_GROUPS = 2;
-    private static final int QUERY_ANSWERS_TO_BE_INSERTED = 150;
+    private static final int QUERY_ANSWERS_TO_BE_INSERTED = 15;
 
     private static final Schema schema1 = new Schema(Arrays.asList(R1.class, R2.class));
     private static final Schema schema2 = new Schema(Arrays.asList(R1.class, R3.class, R2_2.class));
@@ -56,15 +56,18 @@ public class Main {
                 schema, CLEAN_FACTS_TO_BE_GENERATED_IN_EACH_RELATION, FACTS_TO_BE_DUPLICATED_IN_EACH_RELATION,
                 SIZE_OF_KEY_EQUAL_GROUPS, query, QUERY_ANSWERS_TO_BE_INSERTED);
 
-        System.out.println("database generated");
-        List<List<String>> selectQueryResults = query.runSelectQuery(database);
-        System.out.println("Select query run ");
-
+        //System.out.println("database generated");
         long startTime = System.nanoTime();
+        List<List<String>> selectQueryResults = query.runSelectQuery(database);
+        long endTime = System.nanoTime();
+        long durationInMillisecondsSelect = (endTime - startTime) / 1_000_000;
+        //System.out.println("Select query run ");
+
+        startTime = System.nanoTime();
         List<List<String>> consistentAnswers =
                 findConsistentAnswersAlgorithm.findConsistentAnswers(selectQueryResults, database, query);
-        long endTime = System.nanoTime();
-        long durationInMilliseconds = (endTime - startTime) / 1_000_000;
+        endTime = System.nanoTime();
+        long durationInMillisecondsCqa = (endTime - startTime) / 1_000_000;
 
         int checkedSUnionATotal = findConsistentAnswersAlgorithm.cqaAlgorithm.checkedSUnionATotal;
         int checkedPotentialKsetTotal = findConsistentAnswersAlgorithm.cqaAlgorithm.checkedPotentialKsetTotal;
@@ -72,9 +75,9 @@ public class Main {
         int addedNewKSetToDeltaTotal = findConsistentAnswersAlgorithm.cqaAlgorithm.addedNewKSetToDeltaTotal;
 
         logQueryResults(CLEAN_FACTS_TO_BE_GENERATED_IN_EACH_RELATION, FACTS_TO_BE_DUPLICATED_IN_EACH_RELATION,
-                QUERY_ANSWERS_TO_BE_INSERTED, query, selectQueryResults, consistentAnswers, durationInMilliseconds,
-                checkedSUnionATotal, checkedPotentialKsetTotal, checkedBlockTotal, addedNewKSetToDeltaTotal,
-                SIZE_OF_KEY_EQUAL_GROUPS);
+                QUERY_ANSWERS_TO_BE_INSERTED, query, selectQueryResults, consistentAnswers, durationInMillisecondsSelect,
+                durationInMillisecondsCqa, checkedSUnionATotal, checkedPotentialKsetTotal, checkedBlockTotal,
+                addedNewKSetToDeltaTotal, SIZE_OF_KEY_EQUAL_GROUPS);
     }
 
     private static Map<Query, Schema> createSchemaQueryPairs() {

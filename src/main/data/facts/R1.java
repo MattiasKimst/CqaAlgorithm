@@ -1,13 +1,19 @@
-package main.data.relations;
+package main.data.facts;
 
 import main.data.annotation.PrimaryKey;
 
-public class R7_2 implements Fact {
+public class R1 implements Fact {
+
     @PrimaryKey
     public String x;
-    public String u;
+    public String y;
+    public String z;
 
-    public R7_2() {
+    public R1() {
+    }
+
+    public void setY(String y) {
+        this.y = y;
     }
 
     public void setX(String x) {
@@ -21,9 +27,11 @@ public class R7_2 implements Fact {
 
     @Override
     public String toString() {
-        return "R7_2{" +
+        return "R1{" +
                 "x='" + x + '\'' +
-                ", u='" + u + '\'' +
+                ", y='" + y + '\'' +
+                ", z='" + z + '\'' +
                 '}';
     }
+
 }

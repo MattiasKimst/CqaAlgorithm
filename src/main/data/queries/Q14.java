@@ -1,14 +1,20 @@
 package main.data.queries;
 
 import main.data.models.Database;
-import main.data.relations.*;
-
+import main.data.facts.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+/**
+ * A class implementing the Query interface and representing a specific query.
+ * It defines methods to create Boolean query instances with plugged answer d or SELECT query with d quantified;
+ * methods to run the SELECT or Boolean query;
+ * a method findSatisfyingFacts for finding the facts that satisfy the query for initializing set Delta in CQA algorithm;
+ * a method for constructing a query answer out of given facts.
+ */
 public class Q14 implements Query {
 
     private final String d;
@@ -119,4 +125,5 @@ public class Q14 implements Query {
     public String getQueryAnswers() {
         return "d = " + d;
     }
+
 }

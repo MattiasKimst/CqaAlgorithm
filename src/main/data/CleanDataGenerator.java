@@ -2,12 +2,16 @@ package main.data;
 
 import main.data.models.Database;
 import main.data.models.Schema;
-import main.data.relations.Fact;
+import main.data.facts.Fact;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A class for generating defined number of clean facts into database of defined schema
+ * Clean facts are facts not participating in primary key violations
+ */
 public class CleanDataGenerator {
 
     public Database generateFacts(Schema schema, int numberOfFactsToBeGenerated) throws Exception {
@@ -46,4 +50,5 @@ public class CleanDataGenerator {
 
         return fact;
     }
+
 }

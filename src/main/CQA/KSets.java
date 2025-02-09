@@ -1,12 +1,17 @@
 package main.CQA;
 
-import main.data.relations.Fact;
-
+import main.data.facts.Fact;
 import java.util.*;
 
-//to not save all possible combinations (k-sets) to a variable which would case OutOfMemoryError, we implement iterator that
-//dynamically returns next combination by calling the method next()
+/**
+ * A class for finding all possible k-sets from database
+ * to not save all possible combinations (k-sets) to a variable which could case OutOfMemoryError,
+ * we implement iterator that dynamically returns next combination by calling the method next()
+ * the main logic is tracking the indices of each set from which we pick facts into combinations
+ */
+
 public class KSets implements Iterator<HashSet<Fact>> {
+
     private List<Fact> allFacts;  // Flattened list of all facts
     private int k;               // Maximum subset size
     private int[] indices;       // Indices for generating subsets
@@ -82,4 +87,5 @@ public class KSets implements Iterator<HashSet<Fact>> {
             indices[j] = j;
         }
     }
+
 }

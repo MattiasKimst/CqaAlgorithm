@@ -2,14 +2,19 @@ package main.data;
 
 import main.data.models.Database;
 import main.data.queries.Query;
-import main.data.relations.Fact;
+import main.data.facts.Fact;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * A class for inserting answers into database
+ * Takes specified number of fact combinations from database and modifies their attribute values in a way that
+ * the fact combinations satisfy the query
+ */
 public class QueryAnswersInserter {
 
-    public void insertQueryAnswers(Database database, int numberOfAnswersToSatisfyQuery, Query query) throws Exception {
+    public void insertQueryAnswers(Database database, int numberOfAnswersToSatisfyQuery, Query query) {
 
         List<List<Fact>> selectedFactsFromRelations = new ArrayList<>();
         for (List<Fact> relation : database.getDatabase()) {
@@ -30,4 +35,5 @@ public class QueryAnswersInserter {
         Collections.shuffle(copy);
         return copy.subList(0, numberOfFactsToBeSelected);
     }
+
 }

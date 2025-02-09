@@ -10,8 +10,9 @@ public class Logger {
     public static void logQueryResults(int numberOfCleanFactsToBeGeneratedInEachRelation,
                                        int numberOfFactsToBeDuplicatedInEachRelation, int numberOfAnswersGenerated,
                                        Query query, List<List<String>> selectQueryResults,
-                                       List<List<String>> certainAnswers, long durationInMilliseconds,
-                                       int checkedSUnionATotal, int checkedPotentialKsetTotal, int checkedBlockTotal,
+                                       List<List<String>> certainAnswers, long durationInMillisecondsSelect,
+                                       long durationInMillisecondsCqa, int checkedSUnionATotal,
+                                       int checkedPotentialKsetTotal, int checkedBlockTotal,
                                        int addedNewKSetToDeltaTotal, int sizeOfKeyEqualGroups) {
 
         int finalRelationSize = numberOfCleanFactsToBeGeneratedInEachRelation
@@ -31,7 +32,8 @@ public class Logger {
         System.out.println("In total there are " + finalDatabaseSize + " facts in database.");
         System.out.println("SELECT query returned " + selectQueryResults.size() + " answers.");
         System.out.println("Certain were "  + certainAnswers.size() + " answers.");
-        System.out.println("Time taken to find certain answers: " + durationInMilliseconds + " ms");
+        System.out.println("Time taken to find all answers: " + durationInMillisecondsSelect + " ms");
+        System.out.println("Time taken to find certain answers: " + durationInMillisecondsCqa + " ms");
         System.out.println("In total checked " + checkedSUnionATotal
                 + " times if there exists suitable S prim, "
                 + checkedPotentialKsetTotal + " potential KSets, "
@@ -55,8 +57,9 @@ public class Logger {
                     String.valueOf(checkedPotentialKsetTotal),
                     String.valueOf(checkedBlockTotal),
                     String.valueOf(addedNewKSetToDeltaTotal),
-                    String.valueOf(durationInMilliseconds)
-                    );
+                    String.valueOf(durationInMillisecondsSelect),
+                    String.valueOf(durationInMillisecondsCqa)
+            );
             writer.write(csvEntry);
             writer.newLine();
         } catch (IOException e) {

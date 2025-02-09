@@ -1,12 +1,15 @@
 package main.tests;
 
 import main.data.models.Database;
-import main.data.relations.Fact;
-import main.data.relations.R1;
-import main.data.relations.R2;
+import main.data.facts.Fact;
+import main.data.facts.R1;
+import main.data.facts.R2;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A testcase that checks on a simple database example if the algorithm correctly detects if a query is not certain
+ */
 public class TestUncertainQuery extends TestBase {
 
     public static boolean testUncertainQuery() {
@@ -41,4 +44,5 @@ public class TestUncertainQuery extends TestBase {
 
         return consitentAnswers.isEmpty(); //the query is uncertain therefore there should be no consistent answers
     }
+
 }

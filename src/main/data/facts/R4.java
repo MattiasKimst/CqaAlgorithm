@@ -1,8 +1,9 @@
-package main.data.relations;
+package main.data.facts;
 
 import main.data.annotation.PrimaryKey;
 
 public class R4 implements Fact {
+
     @PrimaryKey
     public String y;
     @PrimaryKey
@@ -12,8 +13,8 @@ public class R4 implements Fact {
     public R4() {
     }
 
-    //in case of a composite primary key we simply concatenate them, when we find the blocks sharing primary keys, we can
-    //detect that the composite primary keys are the same this way
+    // In case of a composite primary key we simply concatenate them, when we look for the blocks
+    // sharing primary keys, the concatenated primary keys can successfully be compared
     @Override
     public String getPrimaryKey() {
         return y + v;
@@ -27,4 +28,5 @@ public class R4 implements Fact {
                 ", w='" + w + '\'' +
                 '}';
     }
+
 }

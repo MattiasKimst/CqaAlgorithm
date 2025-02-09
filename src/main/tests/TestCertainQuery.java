@@ -1,15 +1,15 @@
 package main.tests;
 
-import main.FindConsistentAnswersAlgorithm;
 import main.data.models.Database;
-import main.data.queries.Q1;
-import main.data.relations.Fact;
-import main.data.relations.R1;
-import main.data.relations.R2;
-
+import main.data.facts.Fact;
+import main.data.facts.R1;
+import main.data.facts.R2;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A testcase that checks on a simple database example if the algorithm detects correctly certain query
+ */
 public class TestCertainQuery extends TestBase {
 
     public static boolean testCertainQuery() {
@@ -42,4 +42,5 @@ public class TestCertainQuery extends TestBase {
 
         return consitentAnswers.size() == 1 && consitentAnswers.get(0).get(0).equals("ABCD");
     }
+
 }

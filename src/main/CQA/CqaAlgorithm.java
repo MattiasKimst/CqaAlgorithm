@@ -2,17 +2,14 @@ package main.CQA;
 
 import main.data.models.Database;
 import main.data.queries.Query;
-import main.data.relations.Fact;
-
-import java.util.ArrayList;
+import main.data.facts.Fact;
 import java.util.HashSet;
-import java.util.List;
 
-import static main.CQA.IrrelevantFactsRemover.removeIrrelevantFacts;
+import static main.CQA.RelevantFactsFinder.findRelevantFacts;
 
 /**
- * The class containing the most central part - the CQA algorithm
- * the method isQueryCertain takes a boolean conjunctive query obtained by plugging a SELECT query anwer to SELECT query
+ * A class containing the most central part - the CQA algorithm
+ * the method isQueryCertain takes a boolean conjunctive query obtained by plugging a SELECT query answer to SELECT query
  * and returns boolean value; True if the answer is certain; False if the answer is not certain
  */
 public class CqaAlgorithm {
@@ -37,7 +34,7 @@ public class CqaAlgorithm {
         delta.initialize(query, database);
 
         // Optimization step - remove irrelevant facts to avoid making unnecessary steps
-        Database relevantDatabase = removeIrrelevantFacts(database, delta);
+        Database relevantDatabase = findRelevantFacts(database, delta);
 
         //Step 2: Add any set S of at most k facts to Δ if there exists a block B (i.e., a maximal set of facts
         // sharing the same key) such that for every fact a∈B there is a set S′⊆S∪{a} such that S′∈Δ
@@ -71,7 +68,7 @@ public class CqaAlgorithm {
                         HashSet<Fact> SUnionA = SetUtils.union(S, a);
 
                         //if fact a does not satisfy S′⊆S∪{a}
-                        if (!thereExistsSPrimThatIsSubsetOfSUnionA(delta.set, SUnionA)) {
+                        if (!thereExistsSPrimeThatIsSubsetOfSUnionA(delta.set, SUnionA)) {
                             //do not add that S to delta
                             shouldAddSToDelta = false;
                             //we can skip looking through all facts in block because we anyway don't add this S
@@ -109,16 +106,16 @@ public class CqaAlgorithm {
         return false;
     }
 
-    private boolean thereExistsSPrimThatIsSubsetOfSUnionA(HashSet<HashSet<Fact>> delta, HashSet<Fact> SUnionA) {
+    private boolean thereExistsSPrimeThatIsSubsetOfSUnionA(HashSet<HashSet<Fact>> delta, HashSet<Fact> SUnionA) {
         //check that there exists S' in delta that is subset of S∪{a}
-        boolean existsSPrim = false;
+        boolean existsSPrime = false;
         for (HashSet<Fact> SPrim : delta) {
             if (SetUtils.isSubSet(SPrim, SUnionA)) {
-                existsSPrim = true;
+                existsSPrime = true;
                 break;
             }
         }
-        return existsSPrim;
+        return existsSPrime;
     }
 
     //for logging and performance measuring purpose

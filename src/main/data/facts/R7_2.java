@@ -1,13 +1,14 @@
-package main.data.relations;
+package main.data.facts;
 
 import main.data.annotation.PrimaryKey;
 
-public class R7 implements Fact {
-    @PrimaryKey
-    public String z;
-    public String x;
+public class R7_2 implements Fact {
 
-    public R7() {
+    @PrimaryKey
+    public String x;
+    public String u;
+
+    public R7_2() {
     }
 
     public void setX(String x) {
@@ -16,14 +17,15 @@ public class R7 implements Fact {
 
     @Override
     public String getPrimaryKey() {
-        return z;
+        return x;
     }
 
     @Override
     public String toString() {
-        return "R7{" +
-                "z='" + z + '\'' +
-                ", x='" + x + '\'' +
+        return "R7_2{" +
+                "x='" + x + '\'' +
+                ", u='" + u + '\'' +
                 '}';
     }
+
 }

@@ -1,7 +1,7 @@
 package main.CQA;
 
 import main.data.models.Database;
-import main.data.relations.Fact;
+import main.data.facts.Fact;
 import java.util.*;
 
 /**
@@ -9,6 +9,7 @@ import java.util.*;
  * A block is a set of facts where all facts share the primary key
  */
 public class Blocks {
+
     public HashSet<HashSet<Fact>> set;
 
     public void initialize(Database database) {
@@ -27,4 +28,5 @@ public class Blocks {
         }
         return new HashSet<>(factsGroupedByKey.values());
     }
+
 }

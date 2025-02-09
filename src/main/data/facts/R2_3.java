@@ -1,8 +1,9 @@
-package main.data.relations;
+package main.data.facts;
 
 import main.data.annotation.PrimaryKey;
 
 public class R2_3 implements Fact {
+
     @PrimaryKey
     public String xPrim;
     public String y;
@@ -24,4 +25,5 @@ public class R2_3 implements Fact {
                 ", w='" + w + '\'' +
                 '}';
     }
+
 }

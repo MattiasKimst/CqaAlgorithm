@@ -1,17 +1,23 @@
 package main.data.queries;
 
 import main.data.models.Database;
-import main.data.relations.Fact;
-import main.data.relations.R1;
-import main.data.relations.R2_4;
-import main.data.relations.R4_2;
-
+import main.data.facts.Fact;
+import main.data.facts.R1;
+import main.data.facts.R2_4;
+import main.data.facts.R4_2;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+/**
+ * A class implementing the Query interface and representing a specific query.
+ * It defines methods to create Boolean query instances with plugged answer z, w, d or SELECT query with z, w, d quantified;
+ * methods to run the SELECT or Boolean query;
+ * a method findSatisfyingFacts for finding the facts that satisfy the query for initializing set Delta in CQA algorithm;
+ * a method for constructing a query answer out of given facts.
+ */
 public class Q10 implements Query {
 
     private final String z;
@@ -111,4 +117,5 @@ public class Q10 implements Query {
     public String getQueryAnswers() {
         return "z = " + z + " w = " + w + " d = " + d;
     }
+
 }

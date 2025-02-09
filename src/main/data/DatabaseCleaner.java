@@ -1,11 +1,16 @@
 package main.data;
 
 import main.data.models.Database;
-import main.data.relations.Fact;
-
+import main.data.facts.Fact;
 import java.util.*;
 
+/**
+ * A class for removing inconsistent that is the facts that participate in any primary key violation
+ * Used for an optimization step to find queries that are certain based on clean part of the database
+ * without the need to run the computationally more expensive CQA algorithm
+ */
 public class DatabaseCleaner {
+
     public Database cleanDatabase(Database database) {
         List<List<Fact>> factsInRelations = new ArrayList<>();
 
@@ -19,7 +24,7 @@ public class DatabaseCleaner {
                         .add(fact);
             }
 
-            // Collect facts that are in groups of exactly one
+            // Collect facts that are in groups of exactly one - meaning they don't share a primary key with other facts
             List<Fact> factsInCleanRelation = new ArrayList<>();
             for (Map.Entry<String, HashSet<Fact>> entry : factsGroupedByKey.entrySet()) {
                 if (entry.getValue().size() == 1) {
@@ -32,4 +37,5 @@ public class DatabaseCleaner {
 
         return new Database(factsInRelations);
     }
+
 }

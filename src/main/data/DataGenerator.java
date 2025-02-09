@@ -4,7 +4,9 @@ import main.data.models.Database;
 import main.data.models.Schema;
 import main.data.queries.Query;
 
-
+/**
+ * The central class for synthetic database generation logic
+ */
 public class DataGenerator {
 
     private final CleanDataGenerator generator = new CleanDataGenerator();
@@ -20,4 +22,5 @@ public class DataGenerator {
         inconsistenciesInserter.insertInconsistencies(database, numberOfFactsToBeDuplicated, sizeOfKeyEqualGroups);
         return database;
     }
+
 }
