@@ -36,7 +36,6 @@ public class InconsistenciesInserter {
         List<Fact> duplicatedList = new ArrayList<>();
 
         for (Fact originalFact : factsToBeDuplicated) {
-            //System.out.println("Original fact: " + originalFact.toString());
             Class<?> relation = originalFact.getClass();
 
             for (int i = 0; i < numberOfTimesToBeDuplicated; i++) {
@@ -50,7 +49,6 @@ public class InconsistenciesInserter {
                     }
                     field.set(duplicateFact, valueToBeAssigned);
                 }
-                //System.out.println("Duplicated fact: " + duplicateFact.toString());
                 duplicatedList.add(duplicateFact);
             }
         }

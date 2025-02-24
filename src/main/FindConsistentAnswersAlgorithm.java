@@ -1,45 +1,43 @@
 package main;
 
 import main.CQA.CqaAlgorithm;
-import main.data.DatabaseCleaner;
+import main.data.DatabasePurifier;
 import main.data.models.Database;
 import main.data.queries.Query;
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * A class with wrapper algorithm that
- *      1. creates a clean database copy where inconsistent facts are removed
- *      2. finds answers that are certain on clean database copy
- *      3. runs CQA for the remaining answers that were not detected to be certain in step 2. to find which of those
- *          are certain
+ * A class with wrapper algorithm that iterates over a list of answers, plugs each answer into query and checks if the
+ * answer is certain either on purified or original database depending on if purifyDatabase value is true or false
  */
 public class FindConsistentAnswersAlgorithm {
 
     CqaAlgorithm cqaAlgorithm = new CqaAlgorithm();
-    DatabaseCleaner databaseCleaner = new DatabaseCleaner();
+    private final DatabasePurifier databasePurifier = new DatabasePurifier();
 
-    public List<List<String>> findConsistentAnswers(List<List<String>> answers, Database database, Query query) {
-        Database cleanDatabase = databaseCleaner.cleanDatabase(database);
-        //System.out.println("Database cleaned ");
-        List<List<String>> consistentAnswers = query.runSelectQuery(cleanDatabase);
+    public List<List<String>> findConsistentAnswers(List<List<String>> answers, Database database, Query query,
+                                                    boolean purifyDatabase) {
+        Database databaseToBeUsed = purifyDatabase
+                ? databasePurifier.removeIrrelevantBlocksFromDatabase(database, query, false)
+                : database;
 
-        List<List<String>> answersToBeCheckedWithCqa = answers.parallelStream()
-                .filter(answer -> !consistentAnswers.contains(answer))
-                .collect(Collectors.toList());
-        //System.out.println("Consistent answers on clean db found");
-
-        consistentAnswers.addAll(runCqa(answersToBeCheckedWithCqa, database, query));
-        return consistentAnswers;
+        return runCqa(answers, databaseToBeUsed, query, purifyDatabase);
     }
 
-    private List<List<String>> runCqa(List<List<String>> answers, Database database, Query query) {
+    private List<List<String>> runCqa(List<List<String>> answers, Database database, Query query, boolean purifyDatabase) {
         return answers.parallelStream()
-                .filter(answer -> {
-                    Query pluggedQuery = query.createWithPluggedVariables(answer);
-                    return cqaAlgorithm.isQueryCertainOnGivenDatabase(database, pluggedQuery);
-                })
+                .filter(answer -> isAnswerCertain(answer, database, query, purifyDatabase))
                 .collect(Collectors.toList());
+    }
+
+    private boolean isAnswerCertain(List<String> answer, Database database, Query query, boolean purifyDatabase) {
+
+        Query pluggedQuery = query.createWithPluggedVariables(answer);
+        Database databaseToBeUsed = purifyDatabase
+                ? databasePurifier.removeIrrelevantBlocksFromDatabase(database, pluggedQuery, true)
+                : database;
+        return cqaAlgorithm.isQueryCertainOnGivenDatabase(databaseToBeUsed, pluggedQuery);
     }
 
 }

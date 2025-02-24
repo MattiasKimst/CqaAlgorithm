@@ -40,9 +40,9 @@ public class TestUncertainQuery extends TestBase {
         Database database = new Database(listOfRelationFactsLists);
 
         List<List<String>> selectQueryResults = q1.runSelectQuery(database);
-        List<List<String>> consitentAnswers = findConsistentAnswersAlgorithm.findConsistentAnswers(selectQueryResults, database, q1);
+        List<List<String>> consistentAnswers = findConsistentAnswersAlgorithm.findConsistentAnswers(selectQueryResults, database, q1, true);
 
-        return consitentAnswers.isEmpty(); //the query is uncertain therefore there should be no consistent answers
+        return consistentAnswers.isEmpty(); //the query is uncertain therefore there should be no consistent answers
     }
 
 }

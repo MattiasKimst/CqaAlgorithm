@@ -18,10 +18,11 @@ import static main.tests.TestUncertainQuery.testUncertainQuery;
 public class Main {
 
     private static final int REPEATS = 25;
-    private static final int CLEAN_FACTS_TO_BE_GENERATED_IN_EACH_RELATION = 95;
-    private static final int FACTS_TO_BE_DUPLICATED_IN_EACH_RELATION = 5;
-    private static final int SIZE_OF_KEY_EQUAL_GROUPS = 2;
-    private static final int QUERY_ANSWERS_TO_BE_INSERTED = 15;
+    private static final int[] CLEAN_FACTS_TO_BE_GENERATED_IN_EACH_RELATION = new int[] {9};
+    private static final int[] FACTS_TO_BE_DUPLICATED_IN_EACH_RELATION = new int[] {1};
+    private static final int[] SIZE_OF_KEY_EQUAL_GROUPS = new int[] {2};
+    private static final int[] QUERY_ANSWERS_TO_BE_INSERTED = new int[] {2};
+
 
     private static final Schema schema1 = new Schema(Arrays.asList(R1.class, R2.class));
     private static final Schema schema2 = new Schema(Arrays.asList(R1.class, R3.class, R2_2.class));
@@ -42,43 +43,68 @@ public class Main {
 
         // Processing schema-query pairs
         for (int i = 0; i < REPEATS; i++) {
-            for (Map.Entry<Query, Schema> entry : schemaQueryPairs.entrySet()) {
-                run(entry.getKey(), entry.getValue());
+            for (int j = 0; j < CLEAN_FACTS_TO_BE_GENERATED_IN_EACH_RELATION.length; j++) {
+                for (Map.Entry<Query, Schema> entry : schemaQueryPairs.entrySet()) {
+                    run(entry.getKey(), entry.getValue(),
+                            CLEAN_FACTS_TO_BE_GENERATED_IN_EACH_RELATION[j],
+                            FACTS_TO_BE_DUPLICATED_IN_EACH_RELATION[j],
+                            SIZE_OF_KEY_EQUAL_GROUPS[j],
+                            QUERY_ANSWERS_TO_BE_INSERTED[j]);
+                }
             }
         }
     }
 
-    private static void run(Query query, Schema schema) throws Exception {
+    private static void run(Query query, Schema schema, int cleanFactsToBeGeneratedInEachRelation,
+                            int factsToBeDuplicatedInEachRelation, int sizeOfKeyEqualGroups,
+                            int queryAnswersToBeInserted) throws Exception {
         DataGenerator dataGenerator = new DataGenerator();
-        FindConsistentAnswersAlgorithm findConsistentAnswersAlgorithm = new FindConsistentAnswersAlgorithm();
 
         Database database = dataGenerator.generateInconsistentDatabase(
-                schema, CLEAN_FACTS_TO_BE_GENERATED_IN_EACH_RELATION, FACTS_TO_BE_DUPLICATED_IN_EACH_RELATION,
-                SIZE_OF_KEY_EQUAL_GROUPS, query, QUERY_ANSWERS_TO_BE_INSERTED);
+                schema, cleanFactsToBeGeneratedInEachRelation, factsToBeDuplicatedInEachRelation,
+                sizeOfKeyEqualGroups, query, queryAnswersToBeInserted);
 
-        //System.out.println("database generated");
         long startTime = System.nanoTime();
         List<List<String>> selectQueryResults = query.runSelectQuery(database);
         long endTime = System.nanoTime();
         long durationInMillisecondsSelect = (endTime - startTime) / 1_000_000;
-        //System.out.println("Select query run ");
 
-        startTime = System.nanoTime();
-        List<List<String>> consistentAnswers =
-                findConsistentAnswersAlgorithm.findConsistentAnswers(selectQueryResults, database, query);
-        endTime = System.nanoTime();
-        long durationInMillisecondsCqa = (endTime - startTime) / 1_000_000;
-
-        int checkedSUnionATotal = findConsistentAnswersAlgorithm.cqaAlgorithm.checkedSUnionATotal;
-        int checkedPotentialKsetTotal = findConsistentAnswersAlgorithm.cqaAlgorithm.checkedPotentialKsetTotal;
-        int checkedBlockTotal = findConsistentAnswersAlgorithm.cqaAlgorithm.checkedBlockTotal;
-        int addedNewKSetToDeltaTotal = findConsistentAnswersAlgorithm.cqaAlgorithm.addedNewKSetToDeltaTotal;
-
-        logQueryResults(CLEAN_FACTS_TO_BE_GENERATED_IN_EACH_RELATION, FACTS_TO_BE_DUPLICATED_IN_EACH_RELATION,
-                QUERY_ANSWERS_TO_BE_INSERTED, query, selectQueryResults, consistentAnswers, durationInMillisecondsSelect,
-                durationInMillisecondsCqa, checkedSUnionATotal, checkedPotentialKsetTotal, checkedBlockTotal,
-                addedNewKSetToDeltaTotal, SIZE_OF_KEY_EQUAL_GROUPS);
+        findCertainAnswers(true, database, query, selectQueryResults, durationInMillisecondsSelect,
+                cleanFactsToBeGeneratedInEachRelation, factsToBeDuplicatedInEachRelation, sizeOfKeyEqualGroups,
+                queryAnswersToBeInserted);
+        findCertainAnswers(false, database, query, selectQueryResults, durationInMillisecondsSelect,
+                cleanFactsToBeGeneratedInEachRelation, factsToBeDuplicatedInEachRelation, sizeOfKeyEqualGroups,
+                queryAnswersToBeInserted);
     }
+
+
+        private static void findCertainAnswers(boolean purifyDatabase, Database database, Query query,
+                                               List<List<String>> selectQueryResults, long durationInMillisecondsSelect,
+                                                int cleanFactsToBeGeneratedInEachRelation,
+                                               int factsToBeDuplicatedInEachRelation, int sizeOfKeyEqualGroups,
+                                               int queryAnswersToBeInserted) throws Exception {
+
+            FindConsistentAnswersAlgorithm findConsistentAnswersAlgorithm = new FindConsistentAnswersAlgorithm();
+
+            long startTime = System.nanoTime();
+            List<List<String>> consistentAnswers = findConsistentAnswersAlgorithm.findConsistentAnswers(
+                    selectQueryResults, database, query, purifyDatabase);
+            long endTime = System.nanoTime();
+            long durationInMillisecondsCqa = (endTime - startTime) / 1_000_000;
+
+            int checkedSUnionATotal = findConsistentAnswersAlgorithm.cqaAlgorithm.checkedSUnionATotal;
+            int checkedPotentialKsetTotal = findConsistentAnswersAlgorithm.cqaAlgorithm.checkedPotentialKsetTotal;
+            int checkedBlockTotal = findConsistentAnswersAlgorithm.cqaAlgorithm.checkedBlockTotal;
+            int addedNewKSetToDeltaTotal = findConsistentAnswersAlgorithm.cqaAlgorithm.addedNewKSetToDeltaTotal;
+
+            logQueryResults(purifyDatabase, cleanFactsToBeGeneratedInEachRelation,
+                    factsToBeDuplicatedInEachRelation, queryAnswersToBeInserted, query,
+                    selectQueryResults, consistentAnswers, durationInMillisecondsSelect,
+                    durationInMillisecondsCqa, checkedSUnionATotal, checkedPotentialKsetTotal,
+                    checkedBlockTotal, addedNewKSetToDeltaTotal, sizeOfKeyEqualGroups);
+
+        }
+
 
     private static Map<Query, Schema> createSchemaQueryPairs() {
         Map<Query, Schema> map = new LinkedHashMap<>();

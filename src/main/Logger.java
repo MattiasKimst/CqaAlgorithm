@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.List;
 
 public class Logger {
-    public static void logQueryResults(int numberOfCleanFactsToBeGeneratedInEachRelation,
+    public static void logQueryResults(boolean purifyDatabase, int numberOfCleanFactsToBeGeneratedInEachRelation,
                                        int numberOfFactsToBeDuplicatedInEachRelation, int numberOfAnswersGenerated,
                                        Query query, List<List<String>> selectQueryResults,
                                        List<List<String>> certainAnswers, long durationInMillisecondsSelect,
@@ -19,7 +19,7 @@ public class Logger {
                 + numberOfFactsToBeDuplicatedInEachRelation * (sizeOfKeyEqualGroups - 1);
         int finalDatabaseSize = finalRelationSize * query.getK();
         double rateOfInconsistencies =
-                (double) (numberOfFactsToBeDuplicatedInEachRelation * sizeOfKeyEqualGroups) / finalDatabaseSize;
+                (double) (numberOfFactsToBeDuplicatedInEachRelation * sizeOfKeyEqualGroups) / finalRelationSize;
 
         System.out.println("Tested " + query.getClass().getSimpleName());
         System.out.println("Generated database with " + numberOfCleanFactsToBeGeneratedInEachRelation
@@ -31,6 +31,7 @@ public class Logger {
         System.out.println("Each relation size in total is " + finalRelationSize);
         System.out.println("In total there are " + finalDatabaseSize + " facts in database.");
         System.out.println("SELECT query returned " + selectQueryResults.size() + " answers.");
+        System.out.println("Purified database: " + purifyDatabase);
         System.out.println("Certain were "  + certainAnswers.size() + " answers.");
         System.out.println("Time taken to find all answers: " + durationInMillisecondsSelect + " ms");
         System.out.println("Time taken to find certain answers: " + durationInMillisecondsCqa + " ms");
@@ -52,6 +53,7 @@ public class Logger {
                     String.valueOf(numberOfAnswersGenerated),
                     String.valueOf(finalDatabaseSize),
                     String.valueOf(selectQueryResults.size()),
+                    String.valueOf(purifyDatabase),
                     String.valueOf(certainAnswers.size()),
                     String.valueOf(checkedSUnionATotal),
                     String.valueOf(checkedPotentialKsetTotal),

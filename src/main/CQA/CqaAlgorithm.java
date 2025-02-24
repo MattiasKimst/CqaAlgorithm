@@ -5,8 +5,6 @@ import main.data.queries.Query;
 import main.data.facts.Fact;
 import java.util.HashSet;
 
-import static main.CQA.RelevantFactsFinder.findRelevantFacts;
-
 /**
  * A class containing the most central part - the CQA algorithm
  * the method isQueryCertain takes a boolean conjunctive query obtained by plugging a SELECT query answer to SELECT query
@@ -33,18 +31,15 @@ public class CqaAlgorithm {
         //Step 1: Initialize set Delta with all sets S that satisfy the query
         delta.initialize(query, database);
 
-        // Optimization step - remove irrelevant facts to avoid making unnecessary steps
-        Database relevantDatabase = findRelevantFacts(database, delta);
-
         //Step 2: Add any set S of at most k facts to Δ if there exists a block B (i.e., a maximal set of facts
         // sharing the same key) such that for every fact a∈B there is a set S′⊆S∪{a} such that S′∈Δ
 
         //First find all such blocks B
-        blocks.initialize(relevantDatabase);
+        blocks.initialize(database);
 
         boolean thereMightBeMoreKSetsToAddToDelta;
         do {
-            kSets.initialize(relevantDatabase.getDatabase(), query.getK());
+            kSets.initialize(database.getDatabase(), query.getK());
 
             //flag that helps us to determine if we need to look through all set S candidates again
             thereMightBeMoreKSetsToAddToDelta = false;

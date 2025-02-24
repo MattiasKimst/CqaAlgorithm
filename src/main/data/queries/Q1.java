@@ -4,10 +4,8 @@ import main.data.models.Database;
 import main.data.facts.Fact;
 import main.data.facts.R1;
 import main.data.facts.R2;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 /**
@@ -67,14 +65,14 @@ public class Q1 implements Query {
                 .flatMap(fact1 -> secondList.stream()
                         .map(fact2 -> selectAnswer((R1) fact1, (R2) fact2)))
                 .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+                .collect(Collectors.toCollection(CopyOnWriteArrayList::new));
     }
 
-    public HashSet<HashSet<Fact>> findSatisfyingFacts(Database database) {
+    public HashSet<HashSet<Fact>> findPluggedQuerySatisfyingFacts(Database database) {
         List<Fact> firstList = database.getDatabase().get(0);
         List<Fact> secondList = database.getDatabase().get(1);
 
-        return firstList.parallelStream()
+        Set<HashSet<Fact>> concurrentSet = firstList.parallelStream()
                 .flatMap(fact1 -> secondList.stream()
                         .filter(fact2 -> booleanQueryCondition((R1) fact1, (R2) fact2))
                         .map(fact2 -> {
@@ -83,8 +81,34 @@ public class Q1 implements Query {
                             set.add(fact2);
                             return set;
                         }))
-                .collect(Collectors.toCollection(HashSet::new));
+                .collect(Collectors.toCollection(ConcurrentHashMap::newKeySet));
+
+        return new HashSet<>(concurrentSet);
     }
+
+    public List<HashSet<Fact>> findRelevantFacts(Database database, boolean isPluggedQuery) {
+
+        List<Fact> firstList = database.getDatabase().get(0);
+        List<Fact> secondList = database.getDatabase().get(1);
+
+        Set<Fact> r1RelevantFactsSet = ConcurrentHashMap.newKeySet();
+        Set<Fact> r2RelevantFactsSet = ConcurrentHashMap.newKeySet();
+
+        firstList.parallelStream()
+                .forEach(fact1 ->
+                        secondList.parallelStream()
+                                .filter(fact2 -> isPluggedQuery
+                                        ? booleanQueryCondition((R1) fact1, (R2) fact2)
+                                        : queryCondition((R1) fact1, (R2) fact2))
+                                .forEach(fact2 -> {
+                                    r1RelevantFactsSet.add(fact1);
+                                    r2RelevantFactsSet.add(fact2);
+                                })
+                );
+
+        return List.of(new HashSet<>(r1RelevantFactsSet), new HashSet<>(r2RelevantFactsSet));
+    }
+
 
     public void makeCombinationOfFactsSatisfyQuery(List<Fact> facts) {
         R1 r1Fact = (R1) facts.get(0);

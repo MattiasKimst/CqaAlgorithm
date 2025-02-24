@@ -14,7 +14,8 @@ public interface Query {
     public Query createWithPluggedVariables(List<String> freeVariables);
     public Boolean runBooleanQuery(List<Fact> facts);
     public List<List<String>> runSelectQuery(Database database);
-    public HashSet<HashSet<Fact>> findSatisfyingFacts(Database database);
+    public HashSet<HashSet<Fact>> findPluggedQuerySatisfyingFacts(Database database);
+    public List<HashSet<Fact>> findRelevantFacts(Database database, boolean isPluggedQuery);
     public void makeCombinationOfFactsSatisfyQuery(List<Fact> facts);
     public String getQueryAnswers();
 

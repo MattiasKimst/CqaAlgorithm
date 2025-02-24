@@ -1,14 +1,10 @@
 package main.data.queries;
 
+import main.data.facts.*;
 import main.data.models.Database;
-import main.data.facts.Fact;
-import main.data.facts.R1;
-import main.data.facts.R2_4;
-import main.data.facts.R4_2;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 /**
@@ -82,15 +78,15 @@ public class Q10 implements Query {
                         .flatMap(fact2 -> thirdList.stream()
                                 .map(fact3 -> selectAnswer((R1) fact1, (R2_4) fact2, (R4_2) fact3))))
                 .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+                .collect(Collectors.toCollection(CopyOnWriteArrayList::new));
     }
 
-    public HashSet<HashSet<Fact>> findSatisfyingFacts(Database database) {
+    public HashSet<HashSet<Fact>> findPluggedQuerySatisfyingFacts(Database database) {
         List<Fact> firstList = database.getDatabase().get(0);
         List<Fact> secondList = database.getDatabase().get(1);
         List<Fact> thirdList = database.getDatabase().get(2);
 
-        return firstList.parallelStream()
+        Set<HashSet<Fact>> concurrentSet = firstList.parallelStream()
                 .flatMap(fact1 -> secondList.stream()
                         .flatMap(fact2 -> thirdList.stream()
                                 .filter(fact3 -> booleanQueryCondition((R1) fact1, (R2_4) fact2, (R4_2) fact3))
@@ -101,7 +97,36 @@ public class Q10 implements Query {
                                     set.add(fact3);
                                     return set;
                                 })))
-                .collect(Collectors.toCollection(HashSet::new));
+                .collect(Collectors.toCollection(ConcurrentHashMap::newKeySet));
+
+        return new HashSet<>(concurrentSet);
+    }
+
+    public List<HashSet<Fact>> findRelevantFacts(Database database, boolean isPluggedQuery) {
+
+        List<Fact> firstList = database.getDatabase().get(0);
+        List<Fact> secondList = database.getDatabase().get(1);
+        List<Fact> thirdList = database.getDatabase().get(2);
+
+        Set<Fact> r1RelevantFactsSet = ConcurrentHashMap.newKeySet();
+        Set<Fact> r2RelevantFactsSet = ConcurrentHashMap.newKeySet();
+        Set<Fact> r3RelevantFactsSet = ConcurrentHashMap.newKeySet();
+
+        firstList.parallelStream().forEach(fact1 ->
+                secondList.forEach(fact2 ->
+                        thirdList.stream()
+                                .filter(fact3 -> isPluggedQuery
+                                        ? booleanQueryCondition((R1) fact1, (R2_4) fact2, (R4_2) fact3)
+                                        : queryCondition((R1) fact1, (R2_4) fact2, (R4_2) fact3))
+                                .forEach(fact3 -> {
+                                    r1RelevantFactsSet.add(fact1);
+                                    r2RelevantFactsSet.add(fact2);
+                                    r3RelevantFactsSet.add(fact3);
+                                })
+                )
+        );
+
+        return List.of(new HashSet<>(r1RelevantFactsSet), new HashSet<>(r2RelevantFactsSet), new HashSet<>(r3RelevantFactsSet));
     }
 
     public void makeCombinationOfFactsSatisfyQuery(List<Fact> facts) {

@@ -38,7 +38,7 @@ public class TestCertainQuery extends TestBase {
         Database database = new Database(listOfRelationFactsLists);
 
         List<List<String>> selectQueryResults = q1.runSelectQuery(database);
-        List<List<String>> consitentAnswers = findConsistentAnswersAlgorithm.findConsistentAnswers(selectQueryResults, database, q1);
+        List<List<String>> consitentAnswers = findConsistentAnswersAlgorithm.findConsistentAnswers(selectQueryResults, database, q1, true);
 
         return consitentAnswers.size() == 1 && consitentAnswers.get(0).get(0).equals("ABCD");
     }

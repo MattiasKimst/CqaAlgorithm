@@ -15,7 +15,7 @@ public class Delta {
     public HashSet<HashSet<Fact>> set;
 
     public void initialize(Query query, Database database) {
-        set = query.findSatisfyingFacts(database);
+        set = query.findPluggedQuerySatisfyingFacts(database);
         //System.out.println("Delta initialized: " + set.toString());
     }
 
