@@ -18,11 +18,10 @@ import static main.tests.TestUncertainQuery.testUncertainQuery;
 public class Main {
 
     private static final int REPEATS = 25;
-    private static final int[] CLEAN_FACTS_TO_BE_GENERATED_IN_EACH_RELATION = new int[] {9};
-    private static final int[] FACTS_TO_BE_DUPLICATED_IN_EACH_RELATION = new int[] {1};
-    private static final int[] SIZE_OF_KEY_EQUAL_GROUPS = new int[] {2};
-    private static final int[] QUERY_ANSWERS_TO_BE_INSERTED = new int[] {2};
-
+    private static final int[] CLEAN_FACTS_TO_BE_GENERATED_IN_EACH_RELATION = new int[] {975, 966, 961, 960, 950, 932, 925, 920, 925, 900, 886, 880};
+    private static final int[] FACTS_TO_BE_DUPLICATED_IN_EACH_RELATION = new int[] {25, 17, 13, 10, 50, 34, 25, 20, 75, 50, 38, 30};
+    private static final int[] SIZE_OF_KEY_EQUAL_GROUPS = new int[] {2, 3, 4, 5, 2, 3, 4, 5, 2, 3, 4, 5};
+    private static final int[] QUERY_ANSWERS_TO_BE_INSERTED = new int[] {150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150};
 
     private static final Schema schema1 = new Schema(Arrays.asList(R1.class, R2.class));
     private static final Schema schema2 = new Schema(Arrays.asList(R1.class, R3.class, R2_2.class));
@@ -72,9 +71,9 @@ public class Main {
         findCertainAnswers(true, database, query, selectQueryResults, durationInMillisecondsSelect,
                 cleanFactsToBeGeneratedInEachRelation, factsToBeDuplicatedInEachRelation, sizeOfKeyEqualGroups,
                 queryAnswersToBeInserted);
-        findCertainAnswers(false, database, query, selectQueryResults, durationInMillisecondsSelect,
-                cleanFactsToBeGeneratedInEachRelation, factsToBeDuplicatedInEachRelation, sizeOfKeyEqualGroups,
-                queryAnswersToBeInserted);
+        //findCertainAnswers(false, database, query, selectQueryResults, durationInMillisecondsSelect,
+          //      cleanFactsToBeGeneratedInEachRelation, factsToBeDuplicatedInEachRelation, sizeOfKeyEqualGroups,
+            //    queryAnswersToBeInserted);
     }
 
 
@@ -131,4 +130,5 @@ public class Main {
         System.out.println("Certain query with duplicate facts test: "
                 + (testCertainQueryDuplicateFacts() ? "PASSED" : "FAILED")+ "\n");
     }
+
 }
