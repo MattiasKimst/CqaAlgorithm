@@ -18,10 +18,10 @@ import static main.tests.TestUncertainQuery.testUncertainQuery;
 public class Main {
 
     private static final int REPEATS = 25;
-    private static final int[] CLEAN_FACTS_TO_BE_GENERATED_IN_EACH_RELATION = new int[] {975, 966, 961, 960, 950, 932, 925, 920, 925, 900, 886, 880};
-    private static final int[] FACTS_TO_BE_DUPLICATED_IN_EACH_RELATION = new int[] {25, 17, 13, 10, 50, 34, 25, 20, 75, 50, 38, 30};
+    private static final int[] CLEAN_FACTS_TO_BE_GENERATED_IN_EACH_RELATION = new int[] {9750, 9668, 9625, 9600, 9500, 9334, 9250, 9200, 9250, 9000, 8875, 8800};
+    private static final int[] FACTS_TO_BE_DUPLICATED_IN_EACH_RELATION = new int[] {250, 166, 125, 100, 500, 333, 250, 200, 750, 500, 375, 300};
     private static final int[] SIZE_OF_KEY_EQUAL_GROUPS = new int[] {2, 3, 4, 5, 2, 3, 4, 5, 2, 3, 4, 5};
-    private static final int[] QUERY_ANSWERS_TO_BE_INSERTED = new int[] {150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150};
+    private static final int[] QUERY_ANSWERS_TO_BE_INSERTED = new int[] {1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500};
 
     private static final Schema schema1 = new Schema(Arrays.asList(R1.class, R2.class));
     private static final Schema schema2 = new Schema(Arrays.asList(R1.class, R3.class, R2_2.class));
@@ -109,18 +109,18 @@ public class Main {
         Map<Query, Schema> map = new LinkedHashMap<>();
         map.put(new Q1(), schema1);
         map.put(new Q2(), schema1);
-        map.put(new Q3(), schema2);
-        map.put(new Q4(), schema2);
+        //map.put(new Q3(), schema2);
+        //map.put(new Q4(), schema2);
         map.put(new Q5(), schema3);
-        map.put(new Q6(), schema4);
-        map.put(new Q7(), schema5);
+        //map.put(new Q6(), schema4);
+        //map.put(new Q7(), schema5);
         map.put(new Q8(), schema6);
-        map.put(new Q9(), schema7);
-        map.put(new Q10(), schema7);
+        //map.put(new Q9(), schema7);
+        //map.put(new Q10(), schema7);
         map.put(new Q11(), schema6);
-        map.put(new Q12(), schema8);
-        map.put(new Q13(), schema9);
-        map.put(new Q14(), schema10);
+        //map.put(new Q12(), schema8);
+        //map.put(new Q13(), schema9);
+        //map.put(new Q14(), schema10);
         return map;
     }
 
